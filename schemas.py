@@ -1,5 +1,17 @@
 from marshmallow import Schema, fields
+
+from models.audit_log import ActionEnum
 from models.documents import CategoryDoc, StatusDoc, AccessLevelDoc
+
+class AuditLogsSchema(Schema):
+    id = fields.Int(dump_only=True, required=False)
+    user_id = fields.Int(dump_only=True, required=False)
+    action = fields.Enum(ActionEnum, dump_only=True, required=False)
+    document_id = fields.Int(dump_only=True, required=False)
+    document_title = fields.Str(dump_only=True, required=False)
+    document_reg_number = fields.Str(dump_only=True, required=False)
+    timestamp = fields.DateTime(dump_only=True, required=False)
+    is_complete = fields.Bool(dump_only=True, required=False)
 
 class PlainRoleSchema(Schema):
     id = fields.Int(dump_only=True, required=False)

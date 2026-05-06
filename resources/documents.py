@@ -11,7 +11,8 @@ from flask import send_file
 
 from db import db
 from decorators.roles import permission_required
-from models import UserModel, RoleModel, DocModel
+from models import UserModel, RoleModel, DocModel, AuditLogModel
+from models.documents import AccessLevelDoc
 from schemas import DocumentSchema, UploadDocumentSchema, EditDocumentSchema
 from cryptography.fernet import Fernet
 import uuid
@@ -44,13 +45,38 @@ class DocsOperations(MethodView):
 
         with open(f"{library_prefix}{uuid4}.bin", "wb") as f:
             f.write(encrypted_doc)
+
         db.session.add(new_doc)
+
+        db.session.commit()
+        db.session.add(AuditLogModel(
+            user_id=current_user.id,
+            action='created_document',
+            document_id=new_doc.id,
+            document_title=new_doc.title,
+            document_reg_number=new_doc.reg_number,
+            timestamp=datetime.now(),
+            is_complete=True
+        ))
         db.session.commit()
         return new_doc
     @blp.response(200,DocumentSchema(many=True))
     @permission_required("read")
     def get(self):
-        all_doc = DocModel.query.all()
+        all_doc = None
+        if(current_user.role.id==3):
+            all_doc = DocModel.query.filter(DocModel.access_level==AccessLevelDoc.public).all()
+
+
+        else:
+            all_doc = DocModel.query.all()
+        db.session.add(AuditLogModel(
+            user_id=current_user.id,
+            action='view_document_list',
+            timestamp=datetime.now(),
+            is_complete=True
+        ))
+        db.session.commit()
         return all_doc
 
 @blp.route("/documents/<int:document_id>")
@@ -58,6 +84,18 @@ class DocOperations(MethodView):
     @permission_required("download_doc")
     def get(self, document_id):
         find_doc = DocModel.query.get_or_404(document_id)
+        if(current_user.role.id==3 and find_doc.access_level!=AccessLevelDoc.public):
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='download_document',
+                document_id = find_doc.id,
+                document_title = find_doc.title,
+                document_reg_number = find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=False
+            ))
+            db.session.commit()
+            return {"message": 'Permission denied'}, 401
         with open(find_doc.file_path, "rb") as f:
             file_bytes = f.read()
 
@@ -66,8 +104,28 @@ class DocOperations(MethodView):
         if(h.hexdigest()==find_doc.file_hash):
             cipher = Fernet(os.getenv("KEY_DOCUMENT"))
             decrypted_data = cipher.decrypt(file_bytes)
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='download_document',
+                document_id=find_doc.id,
+                document_title=find_doc.title,
+                document_reg_number=find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=True
+            ))
+            db.session.commit()
             return send_file(BytesIO(decrypted_data), download_name=find_doc.file_original_name)
         else:
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='download_document',
+                document_id=find_doc.id,
+                document_title=find_doc.title,
+                document_reg_number=find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=False
+            ))
+            db.session.commit()
             return {"message": "File checksum mismatch detected"}, 409
 
     @blp.arguments(EditDocumentSchema, location='form')
@@ -82,6 +140,17 @@ class DocOperations(MethodView):
             pass
         else:
             if (role.edit_anydoc==False):
+                find_doc = DocModel.query.get_or_404(document_id)
+                db.session.add(AuditLogModel(
+                    user_id=current_user.id,
+                    action='edit_document',
+                    document_id=document_id,
+                    document_title=find_doc.title,
+                    document_reg_number=find_doc.reg_number,
+                    timestamp=datetime.now(),
+                    is_complete=False
+                ))
+                db.session.commit()
                 return {"message": "Permission denied"}, 401
         find_doc = DocModel.query.get_or_404(document_id)
         for key, value in form_data.items():
@@ -104,6 +173,16 @@ class DocOperations(MethodView):
         find_doc.updated_at = datetime.now()
         db.session.add(find_doc)
         db.session.commit()
+        db.session.add(AuditLogModel(
+            user_id=current_user.id,
+            action='edit_document',
+            document_id=find_doc.id,
+            document_title=find_doc.title,
+            document_reg_number=find_doc.reg_number,
+            timestamp=datetime.now(),
+            is_complete=True
+        ))
+        db.session.commit()
         return {"message": "File edited"}, 200
     @permission_required('delete')
     def delete(self, document_id):
@@ -113,9 +192,31 @@ class DocOperations(MethodView):
             pass
         else:
             if (role.del_anydoc == False):
+                find_doc = DocModel.query.get_or_404(document_id)
+                db.session.add(AuditLogModel(
+                    user_id=current_user.id,
+                    action='delete_document',
+                    document_id=document_id,
+                    document_title=find_doc.title,
+                    document_reg_number=find_doc.reg_number,
+                    timestamp=datetime.now(),
+                    is_complete=False
+                ))
+                db.session.commit()
                 return {"message": "Permission denied"}, 401
         find_doc = DocModel.query.get_or_404(document_id)
         os.remove(find_doc.file_path)
+        db.session.add(AuditLogModel(
+            user_id=current_user.id,
+            action='delete_document',
+            document_id=document_id,
+            document_title=find_doc.title,
+            document_reg_number=find_doc.reg_number,
+            timestamp=datetime.now(),
+            is_complete=True
+        ))
+        db.session.commit()
         db.session.delete(find_doc)
         db.session.commit()
+
         return {"message": "Delete success"}, 200

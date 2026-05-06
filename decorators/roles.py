@@ -39,6 +39,10 @@ def permission_required(permission):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.download_doc == False):
                     abort(403, 'Permission denied')
+            if(permission=='read_logs'):
+                find_user = UserModel.query.get_or_404(current_user.id)
+                if (find_user.role.read_logs == False):
+                    abort(403, 'Permission denied')
             return func(*args, **kwargs)
 
         return wrapper

@@ -1,0 +1,6 @@
+**/__pycache__
+проблемы в тестах
+data/
+.idea/
+.env
+instance
