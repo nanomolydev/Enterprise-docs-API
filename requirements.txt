@@ -4,3 +4,4 @@ flask-sqlalchemy
 sqlalchemy
 cryptography
 dotenv
+flask-login

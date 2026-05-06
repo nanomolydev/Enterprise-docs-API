@@ -21,7 +21,10 @@ class PlainUserSchema(Schema):
     password = fields.Str(required=True)
 
 class UserSchema(PlainUserSchema):
-    role_id = fields.Int(required=False)
+    full_name = fields.Str(required=True)
+    is_active = fields.Bool(dump_only=True, required=False)
+    department = fields.Str(required=False)
+    role_id = fields.Int(required=True)
     role = fields.Nested(PlainRoleSchema, dump_only=True,required=False)
 
 class RoleSchema(PlainRoleSchema):
@@ -31,8 +34,9 @@ class DocumentSchema(Schema):
     id = fields.Int(dump_only=True, required=False)
     title = fields.Str(required=True)
     reg_number = fields.Str(required=True)
-    created_at = fields.Date(required=False,dump_only=True)
-    author_id = fields.Int(required=True)
+    created_at = fields.DateTime(required=False,dump_only=True)
+    updated_at = fields.DateTime(required=False, dump_only=True)
+    author_id = fields.Int(required=False)
     department = fields.Str(required=False)
     category = fields.Enum(CategoryDoc, required=True)
     access_level = fields.Enum(AccessLevelDoc, required=True)
@@ -42,8 +46,20 @@ class DocumentSchema(Schema):
     file_original_name = fields.Str(required=False)
     file_hash = fields.Str(required=False)
 
-class UploadDocumentSchema(Schema):
-    file = fields.Raw(required=True)
+class EditDocumentSchema(Schema):
+    title = fields.Str(required=False)
+    reg_number = fields.Str(required=False)
+    author_id = fields.Int(required=False)
+    department = fields.Str(required=False)
+    category = fields.Enum(CategoryDoc, required=False)
+    access_level = fields.Enum(AccessLevelDoc, required=False)
+    status = fields.Enum(StatusDoc, required=False)
+    storage_deadline = fields.DateTime(required=False)
 
-class PatchRole(Schema):
-    role_id = fields.Int(required=True)
+class UploadDocumentSchema(Schema):
+    file = fields.Raw(required=False)
+
+class PatchUser(Schema):
+    full_name = fields.Str(required=False)
+    is_active = fields.Bool(required=False)
+    role_id = fields.Int(required=False)

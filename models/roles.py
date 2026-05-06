@@ -1,3 +1,5 @@
+from enum import unique
+
 from db import db
 
 
@@ -5,7 +7,7 @@ class RoleModel(db.Model):
     __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), nullable=False)
+    title = db.Column(db.String(80), nullable=False, unique=True)
     create_doc = db.Column(db.Boolean, default=False, nullable=False)
     read_doc = db.Column(db.Boolean, default=True, nullable=False)
     edit_selfdoc = db.Column(db.Boolean, default=False, nullable=False)
