@@ -11,6 +11,8 @@ def permission_required(permission):
         @wraps(func)
         @login_required
         def wrapper(*args, **kwargs):
+            if(current_user.is_active==False):
+                abort(403, 'Permission denied')
             if(permission=='read'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.read_doc==False):

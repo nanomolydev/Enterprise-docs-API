@@ -22,7 +22,7 @@ class LoginOperations(MethodView):
             if(find_user.check_password(user_data['password'])):
                 login_user(find_user)
                 db.session.add(
-                    AuditLogModel(user_id=current_user.id, action='user_login', timestamp=datetime.datetime.now(),
+                    AuditLogModel(user_id=find_user.id, action='user_login', timestamp=datetime.datetime.now(),
                                   is_complete=True))
                 db.session.commit()
                 return {"message": "You are logged in"}, 200

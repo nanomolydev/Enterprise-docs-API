@@ -38,17 +38,24 @@ class UserOperations(MethodView):
     @permission_required('user_manage')
     def patch(self, role_data, user_id):
         find = UserModel.query.get_or_404(user_id)
-        if (role_data['role_id']==0):
-            find.role_id = None
+        if(role_data.get('role_id', None) == None):
             find.full_name = role_data.get("full_name", find.full_name)
             find.is_active = role_data.get("is_active", find.is_active)
             db.session.add(find)
             db.session.commit()
             return {"message": f"Updated"}, 200
         else:
-            find.role_id = role_data['role_id']
-            find.full_name = role_data.get("full_name", find.full_name)
-            find.is_active = role_data.get("is_active", find.is_active)
-            db.session.add(find)
-            db.session.commit()
-            return {"message": f"Updated"}, 200
+            if (role_data['role_id']==0):
+                find.role_id = None
+                find.full_name = role_data.get("full_name", find.full_name)
+                find.is_active = role_data.get("is_active", find.is_active)
+                db.session.add(find)
+                db.session.commit()
+                return {"message": f"Updated"}, 200
+            else:
+                find.role_id = role_data['role_id']
+                find.full_name = role_data.get("full_name", find.full_name)
+                find.is_active = role_data.get("is_active", find.is_active)
+                db.session.add(find)
+                db.session.commit()
+                return {"message": f"Updated"}, 200
