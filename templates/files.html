@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/files.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <meta charset="UTF-8">
+        <title>Документы</title>
+    </head>
+    <body>
+        <header>
+            <nav id="navbar">
+                <div id="favicon">
+                    ДокументУчёт
+                </div>
+                <div id="rightside">
+                    <div >
+                        <a href="#" class="btn btn-primary-custom  active me-2" id="navbtn" aria-current="page">
+                            <i class="bi bi-files" id="iconnavbtn"></i>
+                            Документы
+                        </a>
+                        <a href="#"\ class="btn btn-primary-custom  me-2" id="navbtn">
+                            <i class="bi bi-person-video2" id="iconnavbtn"></i>
+                            Пользователи
+                        </a>
+                        <a href="#" class="btn btn-primary-custom  me-2" id="navbtn">
+                            <i class="bi bi-clock-history" id="iconnavbtn"></i>
+                            Журнал
+                        </a>
+                    </div>
+                    
+                </div>
+            </nav>
+            <main>
+                <div id="searchtools">
+                    <input class="form-control form-control-custom" placeholder="Поиск по названию"></input>
+                    <select class="form-select form-select-custom">
+                        <option selected>Категория</option>
+                        <option value="personal_doc">Кадровый документ</option>
+                        <option value="financial_doc">Финансовый документ</option>
+                        <option value="contract_doc">Договор</option>
+                        <option value="internal_doc">Внутренний регламент</option>
+                        <option value="technical_doc">Техническая документация</option>
+                    </select>
+                    <select class="form-select form-select-custom">
+                        <option selected>Уровень доступа</option>
+                        <option value="public">Открытый</option>
+                        <option value="official_use">Для служебного пользования</option>
+                        <option value="confidential">Конфиденциально</option>
+                    </select>
+                    <select class="form-select form-select-custom">
+                        <option selected>Статус</option>
+                        <option value="active">Активный</option>
+                        <option value="reviewing">На согласовании</option>
+                        <option value="archived">Архив</option>
+                        <option value="expired">Истёк срок хранения</option>
+                    </select>
+                    <a href="#" class="btn btn-primary-search">
+                        <i class="bi bi-plus"></i>
+                        Добавить
+                    </a>
+                </div>
+                <ul class="list-group" id="maincontent">
+                </ul>
+            </main>
+        </header>
+        <div id="toastdiv" class="toast-container position-fixed"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script type="module" src="{{ url_for('static', filename='js/files.js') }}"></script>
+    </body>
+</html>

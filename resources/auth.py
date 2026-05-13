@@ -1,5 +1,6 @@
 import datetime
 
+from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_login import current_user, login_user, logout_user
@@ -8,8 +9,20 @@ from db import db
 from models import UserModel
 from models.audit_log import AuditLogModel
 from schemas import PlainUserSchema
+from werkzeug.exceptions import UnprocessableEntity
 
 blp = Blueprint("auth", __name__, description="Auth Operations")
+
+
+@blp.app_errorhandler(UnprocessableEntity) 
+def handle_validation_error(err):
+    data = getattr(err, 'data', {})
+    messages = data.get('messages', 'Неизвестная ошибка валидации')
+    
+    return jsonify({
+        "message": "Ошибка валидации данных",
+        "errors": messages
+    }), 422
 
 @blp.route("/login")
 class LoginOperations(MethodView):

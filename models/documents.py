@@ -28,6 +28,7 @@ class DocModel(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     updated_at = db.Column(db.DateTime, nullable=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship("UserModel", back_populates='documents')
     department = db.Column(db.String(100), nullable=True)
     category = db.Column(db.Enum(CategoryDoc), nullable=False)
     access_level = db.Column(db.Enum(AccessLevelDoc), nullable=False)

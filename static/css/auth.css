@@ -1,0 +1,27 @@
+#loginform{
+    display: flex;
+    flex-flow: column;
+    width: 350px;
+    height: 300px;
+    border: 3px dotted black;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+}
+#loginwindow{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.errorlabel{
+    color: red;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+#toastdiv{
+    top: 0;
+    right: 0;
+}

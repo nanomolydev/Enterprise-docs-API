@@ -1,5 +1,6 @@
 import datetime
 
+from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from db import db
@@ -8,6 +9,8 @@ from models import UserModel, RoleModel
 from schemas import UserSchema, PatchUser
 
 blp = Blueprint("users", __name__, description='User Operations')
+
+
 
 @blp.route("/users")
 class UsersOperations(MethodView):

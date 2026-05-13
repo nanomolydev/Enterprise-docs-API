@@ -14,6 +14,7 @@ class UserModel(UserMixin,db.Model):
     department = db.Column(db.String(100), nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
     role = db.relationship("RoleModel", back_populates='users')
+    documents = db.relationship("DocModel", back_populates='author')
     is_active = db.Column(db.Boolean(), default=True, nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False)
 

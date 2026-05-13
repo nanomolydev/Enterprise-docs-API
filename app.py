@@ -13,6 +13,7 @@ from resources.roles import blp as RolesBlueprint
 from resources.documents import blp as DocumentBlueprint
 from resources.auth import blp as AuthBlueprint
 from resources.audit_log import blp as AuditLogBlueprint
+from resources.frontend import blp as FrontendBlueprint
 from dotenv import load_dotenv
 from login import login
 load_dotenv()
@@ -75,4 +76,5 @@ def create_app():
     app.register_blueprint(DocumentBlueprint)
     app.register_blueprint(AuthBlueprint)
     app.register_blueprint(AuditLogBlueprint)
+    app.register_blueprint(FrontendBlueprint)
     return app

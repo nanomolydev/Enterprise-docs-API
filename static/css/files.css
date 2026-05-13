@@ -1,0 +1,164 @@
+
+#rightside{
+    display: flex;
+    height: 3rem;
+    width: 30rem;
+    align-items: center;
+}
+#navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #595A4A;
+}
+.btn.btn-primary-custom {
+    height: 2.5rem;
+    border-radius: 10px;
+    border-color: transparent;
+    background-color: #E6E6E5; 
+    color: #595A4A;
+}
+.btn.btn-primary-custom:hover {
+    height: 2.5rem;
+    border-color: transparent;
+    background-color: #d4d4d3; 
+    color: #474739;
+}
+.btn.btn-primary-custom:active {
+    height: 2.5rem;
+    border-color: transparent;
+    background-color: #d4d4d3; 
+    color: #f5f5f4;
+}
+.btn.active.btn-primary-custom {
+    border-color: transparent;
+    background-color: #a5a5a1; 
+    color: #f5f5f4;
+}
+.btn.btn-primary-search {
+    display: flex;
+    height: 2.5rem;
+    border-color: #A5A5A1;
+    background-color: #E6E6E5; 
+    color: #595A4A;
+}
+.btn.btn-primary-search:hover {
+    display: flex;
+    height: 2.5rem;
+    border-color: #A5A5A1;
+    background-color: #a4a4a2; 
+    color: #474739;
+}
+#searchtools{
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+main{
+    background-color: #E6E6E5;
+}
+.form-control.form-control-custom {
+    background-color: transparent;
+    border-color: #A5A5A1;
+    color: #595A4A;
+}
+.form-select.form-select-custom {
+    background-color: transparent;
+    border-color: #A5A5A1;
+    color: #595A4A;
+}
+#maincontent{
+    
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding-bottom: 1rem;
+}
+.list-group-item.list-group-item-custom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    --bs-list-group-border-color: #A5A5A1;
+    background-color: #E6E6E5;
+    color: #595A4A
+}
+.add-border{
+    border: 2px solid black !important
+}
+#namedocandicon{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.byauthor-text{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+.infodoc{
+    display: flex;
+    flex-direction: column;
+}
+.docname{
+    margin: 0;
+    padding: 0;
+}
+.statusbar{
+    display: flex;
+    gap: 0.5rem;
+}
+.accesslevel-container{
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 1.5rem;
+    display: flex;
+    align-content: center;
+    
+    border-radius: 5px;
+    
+}
+.dsp-level{
+    color: #9D8D30;
+    background-color: #D4D1B2;
+}
+.close-level{
+    color: #9D5930;
+    background-color: #D4BFB2;
+}
+.open-level{
+    color: #6C9663;
+    background-color: #B2D4C0;
+}
+.status-container{
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 5px;
+
+}
+.reviewing-status{
+    color: #E6E6E5;
+    background-color: #9C9AB1;
+}
+.archive-status{
+    color: #E6E6E5;
+    background-color: #B99999;
+}
+.expired-status{
+    color: #E6E6E5;
+    background-color: #CFA5A5;
+}
+.active-status{
+    color: #6C9663;
+    background-color: #B2D4C0;
+}
+#favicon{
+    color: #E6E6E5;
+    margin-left: 1rem;
+}
+#toastdiv{
+    top: 0;
+    right: 0;
+}
