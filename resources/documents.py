@@ -79,8 +79,8 @@ class DocsOperations(MethodView):
         db.session.commit()
         return all_doc
 
-@blp.route("/documents/<int:document_id>")
-class DocOperations(MethodView):
+@blp.route("/documents/<int:document_id>/download")
+class DocDownload(MethodView):
     @permission_required("download_doc")
     def get(self, document_id):
         find_doc = DocModel.query.get_or_404(document_id)
@@ -114,7 +114,7 @@ class DocOperations(MethodView):
                 is_complete=True
             ))
             db.session.commit()
-            return send_file(BytesIO(decrypted_data), download_name=find_doc.file_original_name)
+            return send_file(BytesIO(decrypted_data), download_name=find_doc.file_original_name, as_attachment=True)
         else:
             db.session.add(AuditLogModel(
                 user_id=current_user.id,
@@ -127,6 +127,14 @@ class DocOperations(MethodView):
             ))
             db.session.commit()
             return {"message": "File checksum mismatch detected"}, 409
+
+@blp.route("/documents/<int:document_id>")
+class DocOperations(MethodView):
+    @permission_required("read")
+    @blp.response(200,DocumentSchema)
+    def get(self, document_id):
+        find_doc = DocModel.query.get_or_404(document_id)
+        return find_doc
 
     @blp.arguments(EditDocumentSchema, location='form')
     @blp.arguments(UploadDocumentSchema, location='files', required=False)

@@ -40,3 +40,20 @@ async function loginfunc(){
         window.location.href = '/files';
     }
 }
+
+async function get_info_user(){
+    const res = await fetch("/get_myself",{
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+    });
+    if (res.status==200){
+        window.location.href = '/files';
+    }
+    else{
+        create_toast(await res.text());
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+    await get_info_user();
+})

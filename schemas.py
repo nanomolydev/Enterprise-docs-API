@@ -29,6 +29,8 @@ class PlainRoleSchema(Schema):
 
 class SmallUserSchema(Schema):
     full_name = fields.Str(required=True)
+    role_id = fields.Int(required=True)
+    role = fields.Nested(PlainRoleSchema, dump_only=True,required=False)
 
 class PlainUserSchema(Schema):
     id = fields.Int(dump_only=True, required=False)

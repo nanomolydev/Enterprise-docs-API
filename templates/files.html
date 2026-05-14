@@ -15,20 +15,19 @@
                 </div>
                 <div id="rightside">
                     <div >
-                        <a href="#" class="btn btn-primary-custom  active me-2" id="navbtn" aria-current="page">
+                        <a href="#" class="btn btn-primary-custom  active" id="navbtn" aria-current="page">
                             <i class="bi bi-files" id="iconnavbtn"></i>
                             Документы
+                            
                         </a>
-                        <a href="#"\ class="btn btn-primary-custom  me-2" id="navbtn">
-                            <i class="bi bi-person-video2" id="iconnavbtn"></i>
-                            Пользователи
-                        </a>
-                        <a href="#" class="btn btn-primary-custom  me-2" id="navbtn">
-                            <i class="bi bi-clock-history" id="iconnavbtn"></i>
-                            Журнал
-                        </a>
+                        
                     </div>
-                    
+                    <div>
+                        <div class="circle">
+                            <p class="delete-standart-rules">Э</p>
+                            <p class="delete-standart-rules">Г</p>
+                        </div>
+                    </div>
                 </div>
             </nav>
             <main>
@@ -61,7 +60,94 @@
                     </a>
                 </div>
                 <ul class="list-group" id="maincontent">
+                    <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="0">
+                        
+                        <div id="namedocandicon">
+                            <i class="bi bi-file-earmark-word-fill" style="font-size: 1.5rem;"></i>
+                            <div class="infodoc">
+                                <p class="docname">Тестовый документ</p>
+                                <p class="byauthor-text">Автор: Я</p>
+                            </div>
+                        </div>
+                        <div class="statusbar ">
+                            <div class="accesslevel-container open-level">
+                                <p>Открытый</p>
+                            </div>
+                            <div class="status-container reviewing-status" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="${StatusDoc[data[i]?.status]?.label}">
+                                <i class="bi bi-eye"></i>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
+
+                <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
+
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasRightLabel">ДОКУМЕНТ</h5>
+                        <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <p id="readdocname" class="delete-standart-rules">Название документа</p>
+                        <p class="delete-standart-rules" id="byauthor-text-read-doc">Автор:</p>
+                        <div class="statusbar" id="read_doc_statusbar">
+                            
+                        </div>
+                        <hr class="separator-doc-info"></hr>
+                        <div class="read-doc-container">
+                            <div class="block-read-doc ">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Категория</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules" id="category-doc-label">Финансовые отчеты</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Департамент</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules" id="department-doc-label">Бухгалтерия</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Дата создания</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="created_at-doc-label">12.05.2024</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Дата последнего обновления</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="updated_at-doc-label">14.05.2024</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Регистрационный номер</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="reg_number-doc-label">DOC-2024-0056</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Статус</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="status-doc-label">На согласовании</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Срок хранения</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="storage_deadline-doc-label">12.05.2034</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Уровень доступа</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="access_level-doc-label">Для служебного пользования</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Название файла</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="file_original_name-doc">report_financial_q1_2024.pdf</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-download" id="doc-download">
+                            <i class="bi bi-download"></i>
+                            <p class="delete-standart-rules">Скачать</p>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
+                            <i class="bi bi-pencil-square"></i>
+                            <p class="delete-standart-rules">Редактировать</p>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
+                            <i class="bi bi-trash"></i>
+                            <p class="delete-standart-rules">Удалить</p>
+                        </button>
+                    </div>
+                    
+                </div>
+                
             </main>
         </header>
         <div id="toastdiv" class="toast-container position-fixed"></div>

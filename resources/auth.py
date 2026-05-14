@@ -3,12 +3,12 @@ import datetime
 from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 from marshmallow.utils import timestamp
 from db import db
 from models import UserModel
 from models.audit_log import AuditLogModel
-from schemas import PlainUserSchema
+from schemas import PlainUserSchema, SmallUserSchema
 from werkzeug.exceptions import UnprocessableEntity
 
 blp = Blueprint("auth", __name__, description="Auth Operations")
@@ -54,3 +54,10 @@ class LogoutOperations(MethodView):
         db.session.commit()
         logout_user()
         return {"message": "You are logout"}, 200
+
+@blp.route("/get_myself")
+class CheckMySelf(MethodView):
+    @login_required
+    @blp.response(200, SmallUserSchema)
+    def get(self):
+        return current_user
