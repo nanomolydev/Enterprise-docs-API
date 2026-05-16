@@ -6,10 +6,22 @@ blp = Blueprint("frontend", __name__, description='Frontend Endpoints')
 @blp.route("/login")
 class LoginFrontend(MethodView):
     def get(self):
-        return render_template("auth.html")
+        return render_template("login.html")
 
 
-@blp.route("/files")
+@blp.route("/documents")
 class FilesFrontend(MethodView):
     def get(self):
-        return render_template("files.html")
+        return render_template("documents.html")
+    
+
+
+@blp.route("/users")
+class UsersFrontend(MethodView):
+    def get(self):
+        return render_template("users.html")
+    
+@blp.route("/logs")
+class LogsFrontend(MethodView):
+    def get(self):
+        return render_template("logs.html")

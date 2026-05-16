@@ -22,3 +22,4 @@ class AuditLogModel(db.Model):
     document_reg_number = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, nullable=False)
     is_complete = db.Column(db.Boolean, nullable=False, default=True)
+    user = db.relationship('UserModel', back_populates='audit_logs')

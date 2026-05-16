@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/files.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/page.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <meta charset="UTF-8">
-        <title>Документы</title>
+        <title>Журнал</title>
     </head>
     <body>
         <header>
@@ -13,9 +13,9 @@
                 <div id="favicon">
                     ДокументУчёт
                 </div>
-                <div id="rightside">
-                    <div >
-                        <a href="#" class="btn btn-primary-custom  active" id="navbtn" aria-current="page">
+                <div id="rightside" >
+                    <div id="doc_page">
+                        <a href="#" class="btn btn-primary-custom " id="doc_select_page" aria-current="page">
                             <i class="bi bi-files" id="iconnavbtn"></i>
                             Документы
                             
@@ -23,15 +23,26 @@
                         
                     </div>
                     <div>
-                        <div class="circle">
-                            <p class="delete-standart-rules">Э</p>
-                            <p class="delete-standart-rules">Г</p>
+                        <div class="circle" data-bs-toggle="dropdown" >
+                            <p class="delete-standart-rules" contenteditable="false" id="first_word_avatar"></p>
+                            <p class="delete-standart-rules" contenteditable="false" id="last_word_avatar"></p>
+                            <div class="dropdown-menu p-4 text-body-secondary" style="max-width: 200px;" id="auth-dropdown-container">
+                                <div class="avatar" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person-fill" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="delete-standart-rules" id="full_name_dropdown">Имя</p>
+                                <p class="delete-standart-rules" id="role_dropdown">Роль</p>
+                                <a href="#" class="btn btn-primary-custom" id="backtologin" aria-current="page">
+                                    Выйти
+                                    
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
             <main>
-                <div id="searchtools">
+                <!-- <div id="searchtools">
                     <input class="form-control form-control-custom" placeholder="Поиск по названию"></input>
                     <select class="form-select form-select-custom">
                         <option selected>Категория</option>
@@ -54,13 +65,13 @@
                         <option value="archived">Архив</option>
                         <option value="expired">Истёк срок хранения</option>
                     </select>
-                    <a href="#" class="btn btn-primary-search">
+                    <a href="#" class="btn btn-primary-search" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <i class="bi bi-plus"></i>
                         Добавить
                     </a>
-                </div>
+                </div> -->
                 <ul class="list-group" id="maincontent">
-                    <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="0">
+                    <!-- <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="0">
                         
                         <div id="namedocandicon">
                             <i class="bi bi-file-earmark-word-fill" style="font-size: 1.5rem;"></i>
@@ -77,7 +88,7 @@
                                 <i class="bi bi-eye"></i>
                             </div>
                         </div>
-                    </li>
+                    </li> -->
                 </ul>
 
                 <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
@@ -148,10 +159,64 @@
                     
                 </div>
                 
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form >
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="formFile" class="form-label">Загрузить файл</label>
+                                        <input class="form-control" type="file" id="formFile">
+                                    </div>
+                                    <select class="form-select" id="add_doc_category" required >
+                                        <option selected>Категория</option>
+                                    </select>
+                                    <select id="add_doc_status" class="form-select" required>
+                                        <option selected>Статус</option>
+                                    </select>
+                                    <select class="form-select" id="add_doc_access_level" required>
+                                        <option selected>Уровень доступа</option>
+                                    </select>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Название документа</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputNameDoc" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Департамент</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputDepartDoc" >
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Регистрационный номер</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputRegNumber" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Срок хранения</label>
+                                        <input type="date" class="form-control" id="inputExpiredDate">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-primary" id="add_doc_btn">Добавить</button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
             </main>
         </header>
         <div id="toastdiv" class="toast-container position-fixed"></div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script type="module" src="{{ url_for('static', filename='js/files.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/logs.js') }}"></script>
     </body>
 </html>

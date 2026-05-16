@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/page.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <meta charset="UTF-8">
+        <title>Документы</title>
+    </head>
+    <body>
+        <header>
+            <nav id="navbar">
+                <div id="favicon">
+                    ДокументУчёт
+                </div>
+                <div id="rightside" >
+                    <div id="select_page">
+                        <a href="#" class="btn btn-primary-custom  active" id="navbtn" aria-current="page">
+                            <i class="bi bi-files" id="iconnavbtn"></i>
+                            Документы
+                            
+                        </a>
+                        <hr id="selected_page">
+                    </div>
+                    <div>
+                        <div class="circle" data-bs-toggle="dropdown" >
+                            <p class="delete-standart-rules" contenteditable="false" id="first_word_avatar"></p>
+                            <p class="delete-standart-rules" contenteditable="false" id="last_word_avatar"></p>
+                            <div class="dropdown-menu p-4 text-body-secondary" style="max-width: 200px;" id="auth-dropdown-container">
+                                <div class="avatar" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person-fill" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="delete-standart-rules" id="full_name_dropdown">Имя</p>
+                                <p class="delete-standart-rules" id="role_dropdown">Роль</p>
+                                <a href="#" class="btn btn-primary-custom" id="backtologin" aria-current="page">
+                                    Выйти
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <main>
+                <div id="searchtools">
+                    <input class="form-control form-control-custom" id="search_name" placeholder="Поиск по названию" value=""></input>
+                    <select class="form-select form-select-custom" id="search_category">
+                        <option value="" selected>Категория</option>
+                        <option value="personal_doc">Кадровый документ</option>
+                        <option value="financial_doc">Финансовый документ</option>
+                        <option value="contract_doc">Договор</option>
+                        <option value="internal_doc">Внутренний регламент</option>
+                        <option value="technical_doc">Техническая документация</option>
+                    </select>
+                    <select class="form-select form-select-custom" id="search_access_level">
+                        <option value="" selected>Уровень доступа</option>
+                        <option value="public">Открытый</option>
+                        <option value="official_use">Для служебного пользования</option>
+                        <option value="confidential">Конфиденциально</option>
+                    </select>
+                    <select class="form-select form-select-custom" id="search_status">
+                        <option value="" selected>Статус</option>
+                        <option value="active">Активный</option>
+                        <option value="reviewing">На согласовании</option>
+                        <option value="archived">Архив</option>
+                        <option value="expired">Истёк срок хранения</option>
+                    </select>
+                    <a href="#" id="show_add_modal" class="btn btn-primary-search" data-bs-toggle="modal" data-bs-target="#container_add_doc">
+                        <i class="bi bi-plus"></i>
+                        Добавить
+                    </a>
+                </div>
+                <div id="doc_page_bar">
+                    <div id="counter_page_container">
+                        <label for="formFile" class="form-label delete-standart-rules">Кол-во док-ов:</label>
+                        <input class="form-control form-control-custom form-width-fit" id="count_doc" placeholder="10" value="10"></input>
+                    </div>
+                    <div id="page_control">
+                        
+                        <button href="#" id="back_page_btn" class="btn control_page_btn" >
+                            <i class="bi bi-caret-left "></i>
+                            
+                        </button>
+                        <div class="btn " id="counter_page">-</div>
+                        <button href="#" id="next_page_btn" class="btn control_page_btn" >
+                            <i class="bi bi-caret-right "></i>
+                            
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-group" id="maincontent">
+                    <!-- <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="0">
+                        
+                        <div id="namedocandicon">
+                            <i class="bi bi-file-earmark-word-fill" style="font-size: 1.5rem;"></i>
+                            <div class="infodoc">
+                                <p class="docname">Тестовый документ</p>
+                                <p class="byauthor-text">Автор: Я</p>
+                            </div>
+                        </div>
+                        <div class="statusbar ">
+                            <div class="accesslevel-container open-level">
+                                <p>Открытый</p>
+                            </div>
+                            <div class="status-container reviewing-status" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="${StatusDoc[data[i]?.status]?.label}">
+                                <i class="bi bi-eye"></i>
+                            </div>
+                        </div>
+                    </li> -->
+                </ul>
+
+                <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
+
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasRightLabel">ДОКУМЕНТ</h5>
+                        <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <p id="readdocname" class="delete-standart-rules">Название документа</p>
+                        <p class="delete-standart-rules" id="byauthor-text-read-doc">Автор:</p>
+                        <div class="statusbar" id="read_doc_statusbar">
+                            
+                        </div>
+                        <hr class="separator-doc-info"></hr>
+                        <div class="read-doc-container">
+                            <div class="block-read-doc ">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Категория</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules" id="category-doc-label">Финансовые отчеты</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Департамент</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules" id="department-doc-label">Бухгалтерия</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Дата создания</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="created_at-doc-label">12.05.2024</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Дата последнего обновления</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="updated_at-doc-label">14.05.2024</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Регистрационный номер</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="reg_number-doc-label">DOC-2024-0056</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Статус</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="status-doc-label">На согласовании</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Срок хранения</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="storage_deadline-doc-label">12.05.2034</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Уровень доступа</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="access_level-doc-label">Для служебного пользования</p>
+                            </div>
+                            <div class="block-read-doc">
+                                <p style="font-size: 0.8rem;" class="delete-standart-rules ">Название файла</p>
+                                <p style="color: #FEFDFA;" class="delete-standart-rules " id="file_original_name-doc">report_financial_q1_2024.pdf</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-download" id="doc-download">
+                            <i class="bi bi-download"></i>
+                            <p class="delete-standart-rules">Скачать</p>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
+                            <i class="bi bi-pencil-square"></i>
+                            <p class="delete-standart-rules">Редактировать</p>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
+                            <i class="bi bi-trash"></i>
+                            <p class="delete-standart-rules">Удалить</p>
+                        </button>
+                    </div>
+                    
+                </div>
+                
+                <div class="modal fade" id="container_add_doc" data-type-action="create"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form >
+                                <div class="modal-body" >
+                                    <div class="mb-3">
+                                        <label for="formFile" class="form-label">Загрузить файл</label>
+                                        <input class="form-control" type="file" id="formFile">
+                                    </div>
+                                    <select class="form-select" id="add_doc_category" required >
+                                        <option value="" selected>Категория</option>
+                                    </select>
+                                    <select id="add_doc_status" class="form-select" required>
+                                        <option value="" selected>Статус</option>
+                                    </select>
+                                    <select class="form-select" id="add_doc_access_level" required>
+                                        <option value="" selected>Уровень доступа</option>
+                                    </select>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Название документа</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputNameDoc" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Департамент</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputDepartDoc" >
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Регистрационный номер</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputRegNumber" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Срок хранения</label>
+                                        <input type="date" class="form-control" id="inputExpiredDate">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-primary" id="add_doc_btn">Добавить</button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </header>
+        <div id="toastdiv" class="toast-container position-fixed"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script type="module" src="{{ url_for('static', filename='js/documents.js') }}"></script>
+    </body>
+</html>

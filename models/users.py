@@ -17,6 +17,7 @@ class UserModel(UserMixin,db.Model):
     documents = db.relationship("DocModel", back_populates='author')
     is_active = db.Column(db.Boolean(), default=True, nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False)
+    audit_logs = db.relationship("AuditLogModel", back_populates='user')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

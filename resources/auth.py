@@ -24,7 +24,7 @@ def handle_validation_error(err):
         "errors": messages
     }), 422
 
-@blp.route("/login")
+@blp.route("/api/login")
 class LoginOperations(MethodView):
     @blp.arguments(PlainUserSchema)
     def post(self, user_data):
@@ -46,7 +46,7 @@ class LoginOperations(MethodView):
                 return {"message": "Incorrect password"}, 401
         else:
             return {"message": "No data found"}, 404
-@blp.route("/logout")
+@blp.route("/api/logout")
 class LogoutOperations(MethodView):
     def post(self):
         db.session.add(AuditLogModel(user_id=current_user.id, action='user_logout', timestamp=datetime.datetime.now(),
@@ -55,7 +55,7 @@ class LogoutOperations(MethodView):
         logout_user()
         return {"message": "You are logout"}, 200
 
-@blp.route("/get_myself")
+@blp.route("/api/get_myself")
 class CheckMySelf(MethodView):
     @login_required
     @blp.response(200, SmallUserSchema)

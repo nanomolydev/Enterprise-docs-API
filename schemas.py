@@ -4,15 +4,7 @@ from utils.validators import validate_special, validate_digit, validate_lowercas
 from models.audit_log import ActionEnum
 from models.documents import CategoryDoc, StatusDoc, AccessLevelDoc
 
-class AuditLogsSchema(Schema):
-    id = fields.Int(dump_only=True, required=False)
-    user_id = fields.Int(dump_only=True, required=False)
-    action = fields.Enum(ActionEnum, dump_only=True, required=False)
-    document_id = fields.Int(dump_only=True, required=False)
-    document_title = fields.Str(dump_only=True, required=False)
-    document_reg_number = fields.Str(dump_only=True, required=False)
-    timestamp = fields.DateTime(dump_only=True, required=False)
-    is_complete = fields.Bool(dump_only=True, required=False)
+
 
 class PlainRoleSchema(Schema):
     id = fields.Int(dump_only=True, required=False)
@@ -53,8 +45,27 @@ class UserSchema(PlainUserSchema):
     role_id = fields.Int(required=True)
     role = fields.Nested(PlainRoleSchema, dump_only=True,required=False)
 
+class AuditLogsSchema(Schema):
+    id = fields.Int(dump_only=True, required=False)
+    user_id = fields.Int(dump_only=True, required=False)
+    action = fields.Enum(ActionEnum, dump_only=True, required=False)
+    document_id = fields.Int(dump_only=True, required=False)
+    document_title = fields.Str(dump_only=True, required=False)
+    document_reg_number = fields.Str(dump_only=True, required=False)
+    timestamp = fields.DateTime(dump_only=True, required=False)
+    is_complete = fields.Bool(dump_only=True, required=False)
+    user = fields.Nested(UserSchema, dump_only=True, required=False)
+
 class RoleSchema(PlainRoleSchema):
     users = fields.List(fields.Nested(PlainUserSchema, dump_only=True,required=False))
+
+class DocumentQuerySchema(Schema):
+    offset = fields.Int(required=False)
+    limit = fields.Int(required=False)
+    name = fields.Str(required=False)
+    category=fields.Enum(CategoryDoc, required=False)
+    access_level = fields.Enum(AccessLevelDoc, required=False)
+    status = fields.Enum(StatusDoc, required=False)
 
 class DocumentSchema(Schema):
     id = fields.Int(dump_only=True, required=False)
@@ -72,6 +83,7 @@ class DocumentSchema(Schema):
     file_path = fields.Str(required=False)
     file_original_name = fields.Str(required=False)
     file_hash = fields.Str(required=False)
+
 
 class EditDocumentSchema(Schema):
     title = fields.Str(required=False)

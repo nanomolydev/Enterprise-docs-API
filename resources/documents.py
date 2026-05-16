@@ -13,13 +13,13 @@ from db import db
 from decorators.roles import permission_required
 from models import UserModel, RoleModel, DocModel, AuditLogModel
 from models.documents import AccessLevelDoc
-from schemas import DocumentSchema, UploadDocumentSchema, EditDocumentSchema
+from schemas import DocumentQuerySchema, DocumentSchema, UploadDocumentSchema, EditDocumentSchema
 from cryptography.fernet import Fernet
 import uuid
 library_prefix = 'data/'
 blp = Blueprint("documents", __name__, description='Document Operations')
 
-@blp.route("/documents")
+@blp.route("/api/documents")
 class DocsOperations(MethodView):
     @blp.arguments(DocumentSchema, location='form')
     @blp.arguments(UploadDocumentSchema, location='files')
@@ -60,16 +60,35 @@ class DocsOperations(MethodView):
         ))
         db.session.commit()
         return new_doc
+    @blp.arguments(DocumentQuerySchema, location='query')
     @blp.response(200,DocumentSchema(many=True))
     @permission_required("read")
-    def get(self):
-        all_doc = None
+    def get(self, filter_data):
+        all_doc = DocModel.query
+        access_level = filter_data.get("access_level")
+        category = filter_data.get("category")
+        status = filter_data.get("status")
+        name = filter_data.get("name")
+        offset = filter_data.get("offset", 0)
+        limit = filter_data.get("limit")
+        
         if(current_user.role.id==3):
-            all_doc = DocModel.query.filter(DocModel.access_level==AccessLevelDoc.public).all()
+            all_doc = all_doc.filter(DocModel.access_level==AccessLevelDoc.public)
 
-
-        else:
-            all_doc = DocModel.query.all()
+        if(access_level):
+            all_doc = all_doc.filter(DocModel.access_level==access_level
+            )
+        if(category):
+            all_doc = all_doc.filter(DocModel.category==category)
+        if(status):
+            all_doc = all_doc.filter(DocModel.status==status)
+        if(name):
+            all_doc = all_doc.filter(DocModel.title.ilike(f'%{name}%'))
+        all_doc = all_doc.order_by(DocModel.created_at.desc())
+        all_doc = all_doc.offset(offset)
+        if(limit is not None):
+            all_doc = all_doc.limit(limit)
+        
         db.session.add(AuditLogModel(
             user_id=current_user.id,
             action='view_document_list',
@@ -79,7 +98,7 @@ class DocsOperations(MethodView):
         db.session.commit()
         return all_doc
 
-@blp.route("/documents/<int:document_id>/download")
+@blp.route("/api/documents/<int:document_id>/download")
 class DocDownload(MethodView):
     @permission_required("download_doc")
     def get(self, document_id):
@@ -95,7 +114,7 @@ class DocDownload(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": 'Permission denied'}, 401
+            return {"message": 'Permission denied'}, 403
         with open(find_doc.file_path, "rb") as f:
             file_bytes = f.read()
 
@@ -128,7 +147,7 @@ class DocDownload(MethodView):
             db.session.commit()
             return {"message": "File checksum mismatch detected"}, 409
 
-@blp.route("/documents/<int:document_id>")
+@blp.route("/api/documents/<int:document_id>")
 class DocOperations(MethodView):
     @permission_required("read")
     @blp.response(200,DocumentSchema)
@@ -159,7 +178,7 @@ class DocOperations(MethodView):
                     is_complete=False
                 ))
                 db.session.commit()
-                return {"message": "Permission denied"}, 401
+                return {"message": "Permission denied"}, 403
         find_doc = DocModel.query.get_or_404(document_id)
         for key, value in form_data.items():
             setattr(find_doc, key,value)
@@ -211,7 +230,7 @@ class DocOperations(MethodView):
                     is_complete=False
                 ))
                 db.session.commit()
-                return {"message": "Permission denied"}, 401
+                return {"message": "Permission denied"}, 403
         find_doc = DocModel.query.get_or_404(document_id)
         os.remove(find_doc.file_path)
         db.session.add(AuditLogModel(
@@ -228,3 +247,10 @@ class DocOperations(MethodView):
         db.session.commit()
 
         return {"message": "Delete success"}, 200
+    
+
+@blp.route("/api/documents/count")
+class DocsCount(MethodView):
+    @permission_required("read")
+    def get(self):
+        return {"count": DocModel.query.count()}

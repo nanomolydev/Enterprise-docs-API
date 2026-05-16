@@ -43,3 +43,53 @@ export const CategoryDoc = {
   internal_doc: 'Внутренний регламент',
   technical_doc: 'Техническая документация'
 }
+export const LogsInfo = {
+  created_document: {
+      label: 'Создание файла',
+      icon: 'bi-file-earmark-plus'
+  },
+  view_document_list: {
+      label: 'Просмотр списка документов',
+      icon: 'bi-list-ul'
+  },
+  edit_document: {
+      label: 'Редактирование документа',
+      icon: 'bi-pencil-square'
+  },
+  delete_document: {
+      label: 'Удаление документа',
+      icon: 'bi-trash'
+  },
+  download_document: {
+      label: 'Скачивание документа',
+      icon: 'bi-download'
+  },
+  user_login: {
+      label: 'Вход пользователя',
+      icon: 'bi-box-arrow-in-right'
+  },
+  user_logout: {
+      label: 'Выход пользователя',
+      icon: 'bi-box-arrow-right'
+  }
+
+}
+export const RoleInfo = {
+  Admin: {
+    id: 1,
+    label: 'Администратор',
+    className: 'close-level'
+  },
+  Employee: {
+    id: 2,
+    label: 'Сотрудник',
+    className: 'dsp-level'
+  },
+  Reader: {
+    id: 3,
+    label: 'Читатель',
+    className: 'open-level'
+  }
+  
+  
+};

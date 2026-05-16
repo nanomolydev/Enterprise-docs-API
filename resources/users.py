@@ -12,7 +12,7 @@ blp = Blueprint("users", __name__, description='User Operations')
 
 
 
-@blp.route("/users")
+@blp.route("/api/users")
 class UsersOperations(MethodView):
     @blp.arguments(UserSchema)
     @blp.response(200,UserSchema)
@@ -35,8 +35,13 @@ class UsersOperations(MethodView):
         all_user = UserModel.query.all()
         return all_user
 
-@blp.route("/users/<int:user_id>")
+@blp.route("/api/users/<int:user_id>")
 class UserOperations(MethodView):
+    @permission_required("user_manage")
+    @blp.response(200,UserSchema)
+    def get(self, user_id):
+        find_user = UserModel.query.get_or_404(user_id)
+        return find_user
     @blp.arguments(PatchUser)
     @permission_required('user_manage')
     def patch(self, role_data, user_id):

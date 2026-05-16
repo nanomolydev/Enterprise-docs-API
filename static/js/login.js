@@ -24,7 +24,7 @@ async function loginfunc(){
     event.preventDefault(); 
     var login = document.getElementById("loginuser");
     var password = document.getElementById("password_user");
-    const res = await fetch("/login",{
+    const res = await fetch("/api/login",{
         method: 'POST',
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({"login": login.value, "password": password.value})
@@ -37,17 +37,20 @@ async function loginfunc(){
         create_toast(error);
     });
     if(res.status==200){
-        window.location.href = '/files';
+        window.location.href = '/documents';
+    }
+    else{
+        create_toast(await res.text());
     }
 }
 
 async function get_info_user(){
-    const res = await fetch("/get_myself",{
+    const res = await fetch("/api/get_myself",{
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
     if (res.status==200){
-        window.location.href = '/files';
+        window.location.href = '/documents';
     }
     else{
         create_toast(await res.text());

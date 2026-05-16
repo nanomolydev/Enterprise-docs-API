@@ -7,7 +7,7 @@ from schemas import UserSchema,  RoleSchema
 
 blp = Blueprint("roles", __name__, description='Role Operations')
 
-@blp.route("/roles")
+@blp.route("/api/roles")
 class RolesOperations(MethodView):
     @blp.response(200,RoleSchema(many=True))
     @permission_required('user_manage')

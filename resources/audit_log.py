@@ -7,9 +7,16 @@ from schemas import AuditLogsSchema
 
 blp = Blueprint("audit_log", __name__, description='Audit operations')
 
-@blp.route("/logs")
+@blp.route("/api/logs")
 class AuditLogOperations(MethodView):
     @blp.response(200,AuditLogsSchema(many=True))
     @permission_required("read_logs")
     def get(self):
         return AuditLogModel.query.all()
+
+
+@blp.route("/api/logs/count")
+class LogCount(MethodView):
+    @permission_required("read_logs")
+    def get(self):
+        return {"count":AuditLogModel.query.count()}
