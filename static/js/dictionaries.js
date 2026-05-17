@@ -46,31 +46,38 @@ export const CategoryDoc = {
 export const LogsInfo = {
   created_document: {
       label: 'Создание файла',
-      icon: 'bi-file-earmark-plus'
+      icon: 'bi-file-earmark-plus',
+      className: 'circle_green'
   },
   view_document_list: {
       label: 'Просмотр списка документов',
-      icon: 'bi-list-ul'
+      icon: 'bi-list-ul',
+      className: 'circle_grey'
   },
   edit_document: {
       label: 'Редактирование документа',
-      icon: 'bi-pencil-square'
+      icon: 'bi-pencil-square',
+      className: 'circle_yellow'
   },
   delete_document: {
       label: 'Удаление документа',
-      icon: 'bi-trash'
+      icon: 'bi-trash',
+      className: 'circle_red'
   },
   download_document: {
       label: 'Скачивание документа',
-      icon: 'bi-download'
+      icon: 'bi-download',
+      className: 'circle_green'
   },
   user_login: {
       label: 'Вход пользователя',
-      icon: 'bi-box-arrow-in-right'
+      icon: 'bi-box-arrow-in-right',
+      className: 'circle_blue'
   },
   user_logout: {
       label: 'Выход пользователя',
-      icon: 'bi-box-arrow-right'
+      icon: 'bi-box-arrow-right',
+      className: 'circle_purple'
   }
 
 }
@@ -93,3 +100,12 @@ export const RoleInfo = {
   
   
 };
+export const ActionsLogs = {
+  created_document: 'Создание документа',
+  view_document_list: 'Просмотр списка документов',
+  edit_document: 'Редактирование документа',
+  delete_document: 'Удаление документа',
+  download_document: 'Скачивание документа',
+  user_login: 'Вход пользователя',
+  user_logout: 'Выход пользователя',
+}

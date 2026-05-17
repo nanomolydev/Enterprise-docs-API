@@ -14,7 +14,7 @@
                     ДокументУчёт
                 </div>
                 <div id="rightside" >
-                    <div id="select_page">
+                    <div id="select_page" >
                         <a href="#" class="btn btn-primary-custom  active" id="navbtn" aria-current="page">
                             <i class="bi bi-files" id="iconnavbtn"></i>
                             Документы
@@ -32,7 +32,7 @@
                                 </div>
                                 <p class="delete-standart-rules" id="full_name_dropdown">Имя</p>
                                 <p class="delete-standart-rules" id="role_dropdown">Роль</p>
-                                <a href="#" class="btn btn-primary-custom" id="backtologin" aria-current="page">
+                                <a href="#" class="btn btn-primary-auth-custom" id="backtologin" aria-current="page">
                                     Выйти
                                     
                                 </a>
@@ -70,10 +70,18 @@
                         Добавить
                     </a>
                 </div>
-                <div id="doc_page_bar">
+                <div id="doc_page_bar" class="page_bar">
                     <div id="counter_page_container">
-                        <label for="formFile" class="form-label delete-standart-rules">Кол-во док-ов:</label>
-                        <input class="form-control form-control-custom form-width-fit" id="count_doc" placeholder="10" value="10"></input>
+                        <label for="formFile" class="form-label delete-standart-rules ">На странице:</label>
+                        <select class="form-select form-control-custom form-width-fit" id="count_doc"  value="10">
+                            <option value="10" selected>10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">150</option>
+                            <option value="500">500</option>
+                        </select>
+                        <!-- <input class="form-control form-control-custom form-width-fit" id="count_doc" placeholder="10" value="10"></input> -->
                     </div>
                     <div id="page_control">
                         
@@ -114,7 +122,7 @@
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                     <div class="offcanvas-header">
                         <h5 class="offcanvas-title" id="offcanvasRightLabel">ДОКУМЕНТ</h5>
-                        <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body">
                         <p id="readdocname" class="delete-standart-rules">Название документа</p>
@@ -177,11 +185,33 @@
                     
                 </div>
                 
+                <div class="modal fade" id="container_are_you_sure" data-type-action="create"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" >
+                            <div class="modal-header gap-2">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <h1 class="modal-title fs-5" id="warningmodal">Предупреждение</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form >
+                                <div class="modal-body" >
+                                    <p class="delete-standart-rules">Вы уверены что хотите удалить документ?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                                    <button type="submit" class="btn btn-danger" id="delete_doc_btn">Да</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+
                 <div class="modal fade" id="container_add_doc" data-type-action="create"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content" >
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Добавить документ</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form >
@@ -190,34 +220,36 @@
                                         <label for="formFile" class="form-label">Загрузить файл</label>
                                         <input class="form-control" type="file" id="formFile">
                                     </div>
-                                    <select class="form-select" id="add_doc_category" required >
-                                        <option value="" selected>Категория</option>
-                                    </select>
-                                    <select id="add_doc_status" class="form-select" required>
-                                        <option value="" selected>Статус</option>
-                                    </select>
-                                    <select class="form-select" id="add_doc_access_level" required>
-                                        <option value="" selected>Уровень доступа</option>
-                                    </select>
-                                    <div class="mb-3 row">
-                                        <label for="inputPassword" class="col-sm-2 col-form-label">Название документа</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputNameDoc" required>
+                                    <div class="add_doc_info_selectors">
+                                        <select class="form-select" id="add_doc_category" required >
+                                            <option value="" selected>Категория</option>
+                                        </select>
+                                        <select id="add_doc_status" class="form-select" required>
+                                            <option value="" selected>Статус</option>
+                                        </select>
+                                        <select class="form-select" id="add_doc_access_level" required>
+                                            <option value="" selected>Уровень доступа</option>
+                                        </select>
+                                    </div>
+                                    <div class="mt-3 mb-3 ">
+                                        <label for="formFile" class="form-label">Название документа</label>
+                                        <div >
+                                            <input type="text" class="form-control" id="inputNameDoc" placeholder="Договор оказания услуг" required>
                                         </div>
                                     </div>
-                                    <div class="mb-3 row">
-                                        <label for="inputPassword" class="col-sm-2 col-form-label">Департамент</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputDepartDoc" >
+                                    <div class="mt-3 mb-3 ">
+                                        <label for="formFile" class="form-label" >Департамент</label>
+                                        <div >
+                                            <input type="text" class="form-control" id="inputDepartDoc" placeholder="Отдел кадров">
                                         </div>
                                     </div>
-                                    <div class="mb-3 row">
-                                        <label for="inputPassword" class="col-sm-2 col-form-label">Регистрационный номер</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputRegNumber" required>
+                                    <div class="mt-3 mb-3 ">
+                                        <label for="formFile" class="form-label">Регистрационный номер</label>
+                                        <div >
+                                            <input type="text" class="form-control" id="inputRegNumber" placeholder="ДГ-2026-001" required>
                                         </div>
                                     </div>
-                                    <div class="mb-3 row">
+                                    <div class="mb-3 inputExpiredDate">
                                         <label for="inputPassword" class="col-sm-2 col-form-label">Срок хранения</label>
                                         <input type="date" class="form-control" id="inputExpiredDate">
                                     </div>

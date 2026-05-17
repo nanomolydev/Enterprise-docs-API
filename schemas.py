@@ -67,6 +67,15 @@ class DocumentQuerySchema(Schema):
     access_level = fields.Enum(AccessLevelDoc, required=False)
     status = fields.Enum(StatusDoc, required=False)
 
+
+class AuditLogsQuerySchema(Schema):
+    offset = fields.Int(required=False)
+    limit = fields.Int(required=False)
+    action = fields.Str(required=False)
+    user_id=fields.Int(required=False)
+    start_timestamp = fields.DateTime()
+    end_timestamp = fields.DateTime()
+
 class DocumentSchema(Schema):
     id = fields.Int(dump_only=True, required=False)
     title = fields.Str(required=True)

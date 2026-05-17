@@ -74,20 +74,26 @@ async function read_doc(event){
         const doc_edit = document.getElementById("doc-edit");
         const doc_delete = document.getElementById("doc-delete");
 
+        const container_add_doc = document.getElementById("container_add_doc");
+        container_add_doc.setAttribute("data-document-id", document_id);
         doc_download.addEventListener('click', function(event){
             window.location.href = `api/documents/${document_id}/download`
         })
         doc_delete.addEventListener('click', async function(){
-            await delete_doc(document_id);
+            const container_are_you_sure = new bootstrap.Modal("#container_are_you_sure");
+            container_are_you_sure.show();
+            
         })
         doc_edit.addEventListener("click", function (){
-            const container_add_doc = document.getElementById("container_add_doc");
+            const exampleModalLabel = document.getElementById("exampleModalLabel");
+            exampleModalLabel.textContent = 'Редактирование документа';
             container_add_doc.setAttribute("data-type-action", 'edit');
-            container_add_doc.setAttribute("data-document-id", document_id);
+            
             const edit_doc_modal = new bootstrap.Modal('#container_add_doc')
             edit_doc_modal.show();
         })
-
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         const bsOffcanvas = new bootstrap.Offcanvas('#offcanvasRight');
         bsOffcanvas.show()
     }
@@ -121,11 +127,10 @@ function create_toast(toast_text){
 function create_doc(data){
     const alldoc_container = document.getElementById("maincontent");
     alldoc_container.innerHTML = "";
-    data.reverse();
     for(var i=0;i<data.length;i++){
         let doc = `
         <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="${data[i]?.id}">
-            <div id="namedocandicon">
+            <div id="namedocandicon" class="nameandiconobject">
                 <i class="bi bi-file-earmark-word-fill" style="font-size: 1.5rem;"></i>
                 <div class="infodoc">
                     <p class="delete-standart-rules">${data[i]?.title}</p>
@@ -208,8 +213,9 @@ async function getalldoc(){
         create_doc(data);
     }
 }
-async function delete_doc(id){
-    const res = await fetch(`api/documents/${id}`,{
+async function delete_doc(){
+    const container_add_doc = document.getElementById("container_add_doc");
+    const res = await fetch(`api/documents/${container_add_doc.dataset.documentId}`,{
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'}
     });
@@ -300,8 +306,9 @@ function get_filter_params(){
 
 async function load_limit(){
     const params = get_filter_params();
+    console.log(params);
     const count_doc = parseInt(document.getElementById("count_doc").value);
-    const res = await fetch(`api/documents/count`,{
+    var res = await fetch(`api/documents/count?${params.toString()}`,{
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
@@ -309,61 +316,46 @@ async function load_limit(){
     if(await validate_res(res)){
         const data = await res.json();
         const all_doc_count = data?.count;
-        if(count_doc>all_doc_count){
+        console.log(all_doc_count)
+        const doc_page_bar = document.getElementById("doc_page_bar");
+        var count_page = Math.floor(data?.count/count_doc);
+        var visual_page = Math.floor(data?.count/count_doc);
+        var current_page = parseInt(doc_page_bar.dataset.currentPage) || 1;
+        const counter_page = document.getElementById("counter_page");
+        const limit = count_doc;
+        var current_offset = parseInt(doc_page_bar.dataset.currentOffset) || 0;
 
+        if(data?.count%count_doc!=0){
+            visual_page = visual_page+1;
         }
-        else{
-            const doc_page_bar = document.getElementById("doc_page_bar");
-            var count_page = Math.floor(data?.count/count_doc);
-            var visual_page = Math.floor(data?.count/count_doc);
-            var current_page = parseInt(doc_page_bar.dataset.currentPage) || 1;
-            const counter_page = document.getElementById("counter_page");
-            const limit = count_doc;
-            var current_offset = parseInt(doc_page_bar.dataset.currentOffset) || 0;
+        counter_page.textContent=`${current_page} - ${visual_page}`;
+        
+        params.append("offset", current_offset);
+        params.append("limit", limit);
 
-            if(data?.count%count_doc!=0){
-                visual_page = visual_page+1;
-            }
-            counter_page.textContent=`${current_page} - ${visual_page}`;
+        res = await fetch(`api/documents?${params.toString()}`,{
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        });
+        
+        if(await validate_res(res)){
+            console.log("успешно");
+            const data = await res.json();
+            await create_doc(data);
             
-            params.append("offset", current_offset);
-            params.append("limit", limit);
 
-            const res = await fetch(`api/documents?${params.toString()}`,{
-                method: 'GET',
-                headers: {'Content-Type': 'application/json'}
-            });
-            
-            if(await validate_res(res)){
-                console.log("успешно");
-                const data = await res.json();
-                await create_doc(data);
-                
+            const back_page_btn = document.getElementById("back_page_btn");
+            back_page_btn.disabled = true;
 
-                const back_page_btn = document.getElementById("back_page_btn");
-                back_page_btn.disabled = true;
-
-                // if(current_page==1){
-                    
-                // }
-                // if(current_page==visual_page){
-                //     const next_page_btn = document.getElementById("next_page_btn");
-                //     next_page_btn.disabled = true;
-                // }
-                // if(current_page>1){
-                //     const back_page_btn = document.getElementById("back_page_btn");
-                //     back_page_btn.disabled = false;
-                // }
-                // if(current_page<visual_page){
-                //     const next_page_btn = document.getElementById("next_page_btn");
-                //     next_page_btn.disabled = false;
-                // }
-                
-                doc_page_bar.setAttribute("data-current-page",  current_page);
-                doc_page_bar.setAttribute("data-lastpage-offset", (count_doc*count_page));
-                doc_page_bar.setAttribute("data-current-offset", current_offset);
-                doc_page_bar.setAttribute("data-visual-page", visual_page);
+            if(current_page==visual_page){
+                const next_page_btn = document.getElementById("next_page_btn");
+                next_page_btn.disabled = true;
             }
+            
+            doc_page_bar.setAttribute("data-current-page",  current_page);
+            doc_page_bar.setAttribute("data-lastpage-offset", (count_doc*count_page));
+            doc_page_bar.setAttribute("data-current-offset", current_offset);
+            doc_page_bar.setAttribute("data-visual-page", visual_page);
         }
         
     }
@@ -462,8 +454,7 @@ async function back_page(){
 document.addEventListener("DOMContentLoaded", async function () {
     await get_info_user();
     await getalldoc();
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    
 
     const backtologin = document.getElementById("backtologin");
     const add_doc_btn = document.getElementById("add_doc_btn");
@@ -477,6 +468,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const search_category = document.getElementById("search_category");
     const search_access_level = document.getElementById("search_access_level");
     const search_status = document.getElementById("search_status");
+    const delete_doc_btn = document.getElementById("delete_doc_btn");
     await load_limit();
     if(user_page_btn){
         user_page_btn.addEventListener("click", async function(){
@@ -488,6 +480,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             window.location.href = '/logs'
         })
     }
+    delete_doc_btn.addEventListener("click", async function(){
+        event.preventDefault();
+        await delete_doc();
+    })
     search_status.addEventListener("change", async function(){
         await load_limit()
     })
@@ -510,6 +506,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         await load_limit();
     })
     show_add_modal.addEventListener("click", async function(){
+        const exampleModalLabel = document.getElementById("exampleModalLabel");
+            exampleModalLabel.textContent = 'Добавление документа';
         const container_add_doc = document.getElementById("container_add_doc");
         container_add_doc.setAttribute("data-type-action", 'create');
     })
@@ -521,4 +519,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         await logout_user();
     })
     load_add_doc_select();
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 })

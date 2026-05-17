@@ -1,9 +1,10 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
-
+from sqlalchemy import and_
+from db import db
 from decorators.roles import permission_required
 from models import AuditLogModel
-from schemas import AuditLogsSchema
+from schemas import AuditLogsQuerySchema, AuditLogsSchema
 
 blp = Blueprint("audit_log", __name__, description='Audit operations')
 
@@ -11,12 +12,62 @@ blp = Blueprint("audit_log", __name__, description='Audit operations')
 class AuditLogOperations(MethodView):
     @blp.response(200,AuditLogsSchema(many=True))
     @permission_required("read_logs")
-    def get(self):
-        return AuditLogModel.query.all()
-
+    @blp.arguments(AuditLogsQuerySchema, location='query')
+    def get(self, filter_data):
+        all_logs = AuditLogModel.query
+        action = filter_data.get("action")
+        user_id = filter_data.get("user_id")
+        start_timestamp = filter_data.get("start_timestamp")
+        end_timestamp = filter_data.get("end_timestamp")
+        offset = filter_data.get("offset", 0)
+        limit = filter_data.get("limit")
+        all_logs = all_logs.order_by(AuditLogModel.timestamp.desc())
+        if(user_id):
+            all_logs = all_logs.filter(AuditLogModel.user_id==user_id)
+        if(action):
+            all_logs = all_logs.filter(AuditLogModel.action==action)
+        if(start_timestamp and end_timestamp):
+            all_logs = all_logs.filter(and_(AuditLogModel.timestamp>start_timestamp, AuditLogModel.timestamp<end_timestamp))
+        all_logs = all_logs.offset(offset)
+        if(limit is not None):
+            all_logs = all_logs.limit(limit)
+        return all_logs.all()
+    @permission_required("read_logs")
+    def delete(self):
+        db.session.query(AuditLogModel).delete(synchronize_session=False)
+        db.session.commit()
+        return {"message": "All logs deleted"}, 200
 
 @blp.route("/api/logs/count")
 class LogCount(MethodView):
     @permission_required("read_logs")
-    def get(self):
-        return {"count":AuditLogModel.query.count()}
+    @blp.arguments(AuditLogsQuerySchema, location='query')
+    def get(self, filter_data):
+        all_logs = AuditLogModel.query
+        action = filter_data.get("action")
+        user_id = filter_data.get("user_id")
+        start_timestamp = filter_data.get("start_timestamp")
+        end_timestamp = filter_data.get("end_timestamp")
+        
+        if(user_id):
+            all_logs = all_logs.filter(AuditLogModel.user_id==user_id)
+        if(action):
+            all_logs = all_logs.filter(AuditLogModel.action==action)
+        if(start_timestamp and end_timestamp):
+            all_logs = all_logs.filter(and_(AuditLogModel.timestamp>start_timestamp, AuditLogModel.timestamp<end_timestamp))
+        
+        return {"count":all_logs.count()}
+    
+
+@blp.route("/api/logs/<int:log_id>")
+class GetOneLog(MethodView):
+    @blp.response(200,AuditLogsSchema())
+    @permission_required("read_logs")
+    def get(self, log_id):
+        return AuditLogModel.query.get_or_404(log_id)
+    @permission_required("read_logs")
+    def delete(self, log_id):
+        log = AuditLogModel.query.get_or_404(log_id)
+        db.session.delete(log)
+        db.session.commit()
+        return {"message": "Log deleted"}, 200

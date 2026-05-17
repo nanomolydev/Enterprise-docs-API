@@ -71,7 +71,7 @@ class DocsOperations(MethodView):
         name = filter_data.get("name")
         offset = filter_data.get("offset", 0)
         limit = filter_data.get("limit")
-        
+        all_doc = all_doc.order_by(DocModel.created_at.desc())
         if(current_user.role.id==3):
             all_doc = all_doc.filter(DocModel.access_level==AccessLevelDoc.public)
 
@@ -84,7 +84,7 @@ class DocsOperations(MethodView):
             all_doc = all_doc.filter(DocModel.status==status)
         if(name):
             all_doc = all_doc.filter(DocModel.title.ilike(f'%{name}%'))
-        all_doc = all_doc.order_by(DocModel.created_at.desc())
+        
         all_doc = all_doc.offset(offset)
         if(limit is not None):
             all_doc = all_doc.limit(limit)
@@ -252,5 +252,24 @@ class DocOperations(MethodView):
 @blp.route("/api/documents/count")
 class DocsCount(MethodView):
     @permission_required("read")
-    def get(self):
-        return {"count": DocModel.query.count()}
+    @blp.arguments(DocumentQuerySchema, location='query')
+    def get(self, filter_data):
+        all_doc = DocModel.query
+        access_level = filter_data.get("access_level")
+        category = filter_data.get("category")
+        status = filter_data.get("status")
+        name = filter_data.get("name")
+
+        if(current_user.role.id==3):
+            all_doc = all_doc.filter(DocModel.access_level==AccessLevelDoc.public)
+
+        if(access_level):
+            all_doc = all_doc.filter(DocModel.access_level==access_level
+            )
+        if(category):
+            all_doc = all_doc.filter(DocModel.category==category)
+        if(status):
+            all_doc = all_doc.filter(DocModel.status==status)
+        if(name):
+            all_doc = all_doc.filter(DocModel.title.ilike(f'%{name}%'))
+        return {"count": all_doc.count()}

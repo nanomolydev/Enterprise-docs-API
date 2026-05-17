@@ -32,7 +32,7 @@
                                 </div>
                                 <p class="delete-standart-rules" id="full_name_dropdown">Имя</p>
                                 <p class="delete-standart-rules" id="role_dropdown">Роль</p>
-                                <a href="#" class="btn btn-primary-custom" id="backtologin" aria-current="page">
+                                <a href="#" class="btn btn-primary-auth-custom" id="backtologin" aria-current="page">
                                     Выйти
                                     
                                 </a>
@@ -70,7 +70,7 @@
                         Добавить
                     </a>
                 </div> -->
-                <ul class="list-group" id="maincontent">
+                <ul class="list-group" id="maincontent" style="padding-top: 1rem;">
                     <!-- <li class="list-group-item list-group-item-action list-group-item-custom document_element" document_id="0">
                         
                         <div id="namedocandicon">
@@ -129,29 +129,31 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Редактирование пользователя</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form >
                                 <div class="modal-body">
-                                    <select id="edit_user_status" class="form-select" required>
-                                        <option value="" selected>Статус</option>
-                                        <option value="1" selected>Активный</option>
-                                        <option value="0" selected>Отключен</option>
-                                    </select>
-                                    <select class="form-select" id="edit_user_role_select" required>
-                                        <option value="" selected>Роль</option>
-                                    </select>
-                                    <div class="mb-3 row">
-                                        <label for="inputPassword" class="col-sm-2 col-form-label">Имя и фамилия</label>
+                                    <div  class="add_doc_info_selectors">
+                                        <select id="edit_user_status" class="form-select" required>
+                                            <option value="" selected>Статус</option>
+                                            <option value="1" selected>Активный</option>
+                                            <option value="0" selected>Отключен</option>
+                                        </select>
+                                        <select class="form-select" id="edit_user_role_select" required>
+                                            <option value="" selected>Роль</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 mt-3 row">
+                                        <label for="formFile" class="form-label" >Имя и фамилия</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputNameUser" required>
+                                            <input type="text" class="form-control" placeholder="Иван Иванов" id="inputNameUser" required>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label for="inputPassword" class="col-sm-2 col-form-label">Департамент</label>
+                                        <label for="formFile" class="form-label">Департамент</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputDepartUser" >
+                                            <input type="text" class="form-control" id="inputDepartUser" placeholder="Отдел кадров">
                                         </div>
                                     </div>
                                     

@@ -119,11 +119,8 @@ async function open_user(event){
 
         user_edit.addEventListener("click", function (){
             console.log("edit_user");
-            const container_edit_user = document.getElementById("container_edit_user");
             // container_add_doc.setAttribute("data-type-action", 'edit');
             container_edit_user.setAttribute("data-user-id", user_id);
-            const edit_user_modal = new bootstrap.Modal('#container_edit_user')
-            edit_user_modal.show();
         })
 
         const bsOffcanvas = new bootstrap.Offcanvas('#offcanvasRight');
@@ -138,13 +135,13 @@ function create_user(data){
     for(var i=0;i<data.length;i++){
         let user = `
         <li class="list-group-item list-group-item-action list-group-item-custom user_element" data-user-id="${data[i]?.id}">
-            <div id="namedocandicon">
+            <div id="namedocandicon" class="nameandiconobject">
                 <i class="bi bi-person-fill" style="font-size: 1.5rem;"></i>
                 <div class="infodoc">
                     <p class="delete-standart-rules">${data[i]?.full_name}</p>
                 </div>
             </div>
-            <div class="statusbar ">
+            <div class="statusbar statusbar-users ">
                 <div class="accesslevel-container ${RoleInfo[data[i]?.role?.title].className}">
                     <p class="delete-standart-rules">${data[i]?.role?.title}</p>
                     
