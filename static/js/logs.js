@@ -134,13 +134,12 @@ async function read_log(){
     }
 }
 
-function create_log(data, is_delete){
+function create_log(data){
     const alllog_container = document.getElementById("maincontent");
     alllog_container.innerHTML = "";
     for(var i=0;i<data.length;i++){
         let log = `
         <div class='container_log'>
-            ${is_delete ? '<input class="delete_checkbox form-check-input me-1" type="checkbox" value="">': ''}
             <li class="list-group-item list-group-item-action list-group-item-custom log_element" data-log-id="${data[i]?.id}">
                 <div id="namelogandicon" class="nameandiconobject">
                     
@@ -176,7 +175,7 @@ async function getalllogs(){
     
     if(await validate_res(res)){
         const data = await res.json();
-        create_log(data,false);
+        create_log(data);
     }
 }
 async function load_filter_selected(){
@@ -219,7 +218,7 @@ function get_filter_params(){
     return params
 }
 
-async function load_limit(is_delete){
+async function load_limit(){
     const params = get_filter_params();
     console.log(params);
     const count_log = parseInt(document.getElementById("count_log").value);
@@ -256,7 +255,7 @@ async function load_limit(is_delete){
         if(await validate_res(res)){
             console.log("успешно");
             const data = await res.json();
-            await create_log(data,is_delete);
+            await create_log(data);
             
 
             const back_page_btn = document.getElementById("back_page_btn");
@@ -301,7 +300,7 @@ async function next_page(){
     if(await validate_res(res)){
         console.log("успешно");
         const data = await res.json();
-        await create_log(data,false);
+        await create_log(data);
         
         counter_page.textContent=`${current_page} - ${visual_page}`;
         const back_page_btn = document.getElementById("back_page_btn");
@@ -343,7 +342,7 @@ async function back_page(){
     if(await validate_res(res)){
         console.log("успешно");
         const data = await res.json();
-        await create_log(data,false);
+        await create_log(data);
         
         counter_page.textContent=`${current_page} - ${visual_page}`;
         const back_page_btn = document.getElementById("back_page_btn");
@@ -366,35 +365,6 @@ async function back_page(){
     }
 }
 
-async function clean_logs(action){
-    if(action=='all'){
-        const res = await fetch(`api/logs`,{
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json'}
-        });
-        
-        if(await validate_res(res)){
-            window.location.reload();
-        }
-    }
-    else if (action=='page'){
-        const all_logs_page = document.getElementsByClassName("log_element");
-        for(var i = 0; i<all_logs_page.length; i++){
-            var log = all_logs_page[i];
-            var log_id = log.getAttribute("data-log-id");
-            const res = await fetch(`api/logs/${log_id}`,{
-                method: 'DELETE',
-                headers: {'Content-Type': 'application/json'}
-            });
-            
-            if(await validate_res(res)){
-                
-            }
-            
-        }
-        window.location.reload();
-    }
-}
 
 document.addEventListener("DOMContentLoaded", async function(){
     await get_info_user();
@@ -415,69 +385,17 @@ document.addEventListener("DOMContentLoaded", async function(){
     const select_delete = document.getElementById("select_delete");
     const sure_delete = document.getElementById("sure_delete");
     const trash_dropdown = document.getElementById("trash_dropdown");
-    trash_logs.addEventListener("click", async function(){
-        const container_trash_logs = document.getElementById("container_trash_logs");
-        const dropdown = bootstrap.Dropdown.getOrCreateInstance(trash_logs);
-        if(container_trash_logs.dataset.action == 'select'){
-            const all_checkbox = document.getElementsByClassName("delete_checkbox");
-            for(var i = 0; i<all_checkbox.length; i++){
-                var log = all_checkbox[i];
-                if(log.checked){
-                    var log_id = log.nextElementSibling.dataset.logId;
-                    const res = await fetch(`api/logs/${log_id}`,{
-                        method: 'DELETE',
-                        headers: {'Content-Type': 'application/json'}
-                    });
-                    
-                    if(await validate_res(res)){
-                        
-                    }
-                }
-            }
-            dropdown.hide();
-            container_trash_logs.setAttribute("data-action", '');
-            window.location.reload();
-        }
-        else{
-            
-        }
-    })
-    select_delete.addEventListener("click", async function(){
-        event.preventDefault();
-        const container_trash_logs = document.getElementById("container_trash_logs");
-        container_trash_logs.setAttribute("data-action", 'select');
-        await load_limit(true);
-        
-    })
-    delete_select_page.addEventListener("click", function(){
-        const container_trash_logs = document.getElementById("container_trash_logs");
-        const container_are_you_sure = new bootstrap.Modal("#container_are_you_sure");
-        container_trash_logs.setAttribute("data-action", 'page');
-        container_are_you_sure.show();
-    })
-    delete_all_logs.addEventListener('click', function(){
-        const container_trash_logs = document.getElementById("container_trash_logs");
-        const container_are_you_sure = new bootstrap.Modal("#container_are_you_sure");
-        container_trash_logs.setAttribute("data-action", 'all');
-        container_are_you_sure.show();
-    })
-    sure_delete.addEventListener('click', async function(){
-        event.preventDefault();
-        const container_trash_logs = document.getElementById("container_trash_logs");
-        const action = container_trash_logs.dataset.action;
-        await clean_logs(action);
-    })
     inputEndTimestamp.addEventListener('change', async function(){
-        await load_limit(false);
+        await load_limit();
     })
     inputStartTimestamp.addEventListener('change', async function(){
-        await load_limit(false);
+        await load_limit();
     })
     search_users.addEventListener('change', async function(){
-        await load_limit(false);
+        await load_limit();
     })
     search_action.addEventListener('change', async function(){
-        await load_limit(false);
+        await load_limit();
     })
     next_page_btn.addEventListener('click', async function(){
         await next_page();

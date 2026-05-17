@@ -32,11 +32,6 @@ class AuditLogOperations(MethodView):
         if(limit is not None):
             all_logs = all_logs.limit(limit)
         return all_logs.all()
-    @permission_required("read_logs")
-    def delete(self):
-        db.session.query(AuditLogModel).delete(synchronize_session=False)
-        db.session.commit()
-        return {"message": "All logs deleted"}, 200
 
 @blp.route("/api/logs/count")
 class LogCount(MethodView):
@@ -65,9 +60,3 @@ class GetOneLog(MethodView):
     @permission_required("read_logs")
     def get(self, log_id):
         return AuditLogModel.query.get_or_404(log_id)
-    @permission_required("read_logs")
-    def delete(self, log_id):
-        log = AuditLogModel.query.get_or_404(log_id)
-        db.session.delete(log)
-        db.session.commit()
-        return {"message": "Log deleted"}, 200

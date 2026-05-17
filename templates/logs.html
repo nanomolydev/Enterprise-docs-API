@@ -72,16 +72,6 @@
                             <option value="500">500</option>
                         </select>
                     </div>
-                    <div class="dropdown-center" id="container_trash_logs">
-                        <div class="btn trash-btn" id="trash_logs" type="button" data-bs-toggle="dropdown" >
-                            <i class="bi bi-trash-fill"></i>
-                        </div>
-                        <ul class="dropdown-menu" id="trash_dropdown">
-                            <li><button class="dropdown-item" type="button" id="select_delete">Выбрать</button></li>
-                            <li><button class="dropdown-item" type="button" id="delete_select_page">Удалить логи на этой странице</button></li>
-                            <li><button class="dropdown-item" type="button" id="delete_all_logs">Удалить все логи</button></li>
-                        </ul>
-                    </div>
                     
                     <div id="page_control">
                         
@@ -131,27 +121,6 @@
                     
                 </div>
                 
-                <div class="modal fade" id="container_are_you_sure" data-type-action="create"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" >
-                            <div class="modal-header gap-2">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                                <h1 class="modal-title fs-5" id="warningmodal">Предупреждение</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form >
-                                <div class="modal-body" >
-                                    <p class="delete-standart-rules">Вы уверены что хотите удалить лог(и)?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                                    <button type="submit" class="btn btn-danger" id="sure_delete">Да</button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                    </div>
-                </div>
 
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
