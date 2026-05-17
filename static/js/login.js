@@ -40,7 +40,13 @@ async function loginfunc(){
         window.location.href = '/documents';
     }
     else{
-        create_toast(await res.text());
+        if(data){
+            create_toast(data?.message);
+        }
+        else{
+            create_toast(await res.text());
+        }
+        
     }
 }
 

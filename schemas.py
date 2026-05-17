@@ -89,15 +89,15 @@ class DocumentSchema(Schema):
     access_level = fields.Enum(AccessLevelDoc, required=True)
     status = fields.Enum(StatusDoc, required=True)
     storage_deadline = fields.DateTime(required=False)
-    file_path = fields.Str(required=False)
+    file_path = fields.Str(required=False, load_only=True)
     file_original_name = fields.Str(required=False)
-    file_hash = fields.Str(required=False)
+    file_hash = fields.Str(required=False, load_only=True)
+    message = fields.Str(required=False, dump_only=True)
 
 
 class EditDocumentSchema(Schema):
     title = fields.Str(required=False)
     reg_number = fields.Str(required=False)
-    author_id = fields.Int(required=False)
     department = fields.Str(required=False)
     category = fields.Enum(CategoryDoc, required=False)
     access_level = fields.Enum(AccessLevelDoc, required=False)
@@ -105,6 +105,9 @@ class EditDocumentSchema(Schema):
     storage_deadline = fields.DateTime(required=False)
 
 class UploadDocumentSchema(Schema):
+    file = fields.Raw(required=True)
+
+class FormEditDocumentSchema(Schema):
     file = fields.Raw(required=False)
 
 class PatchUser(Schema):

@@ -6,11 +6,14 @@ from db import db
 class ActionEnum(str, Enum):
     created_document = 'created_document'
     view_document_list = 'view_document_list'
+    view_document = 'view_document'
     edit_document = 'edit_document'
     delete_document = 'delete_document'
     download_document = 'download_document'
     user_login = 'user_login'
     user_logout = 'user_logout'
+    manage_user = 'manage_user'
+    read_logs = 'read_logs'
 class AuditLogModel(db.Model):
     __tablename__ = 'audit_log'
 

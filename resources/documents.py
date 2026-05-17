@@ -12,12 +12,40 @@ from flask import send_file
 from db import db
 from decorators.roles import permission_required
 from models import UserModel, RoleModel, DocModel, AuditLogModel
-from models.documents import AccessLevelDoc
-from schemas import DocumentQuerySchema, DocumentSchema, UploadDocumentSchema, EditDocumentSchema
+from models.documents import AccessLevelDoc, StatusDoc
+from schemas import DocumentQuerySchema, DocumentSchema, FormEditDocumentSchema, UploadDocumentSchema, EditDocumentSchema
 from cryptography.fernet import Fernet
 import uuid
 library_prefix = 'data/'
 blp = Blueprint("documents", __name__, description='Document Operations')
+
+def mark_doc_expired_if_needed(doc, now=None):
+    now = now or datetime.now()
+    if doc.status == StatusDoc.active and doc.storage_deadline and doc.storage_deadline < now:
+        doc.status = StatusDoc.expired
+        doc.updated_at = now
+        return True
+    return False
+
+def commit_doc_expiration_if_needed(doc):
+    if mark_doc_expired_if_needed(doc):
+        db.session.commit()
+
+def update_expired_documents():
+    now = datetime.now()
+    updated_count = DocModel.query.filter(
+        DocModel.status == StatusDoc.active,
+        DocModel.storage_deadline.isnot(None),
+        DocModel.storage_deadline < now
+    ).update(
+        {
+            DocModel.status: StatusDoc.expired,
+            DocModel.updated_at: now
+        },
+        synchronize_session=False
+    )
+    if updated_count:
+        db.session.commit()
 
 @blp.route("/api/documents")
 class DocsOperations(MethodView):
@@ -41,6 +69,7 @@ class DocsOperations(MethodView):
         new_doc.file_hash = h.hexdigest()
         new_doc.file_original_name = uploaded_file.filename
         new_doc.created_at = datetime.now()
+        mark_doc_expired_if_needed(new_doc)
 
 
         with open(f"{library_prefix}{uuid4}.bin", "wb") as f:
@@ -64,6 +93,7 @@ class DocsOperations(MethodView):
     @blp.response(200,DocumentSchema(many=True))
     @permission_required("read")
     def get(self, filter_data):
+        update_expired_documents()
         all_doc = DocModel.query
         access_level = filter_data.get("access_level")
         category = filter_data.get("category")
@@ -72,7 +102,7 @@ class DocsOperations(MethodView):
         offset = filter_data.get("offset", 0)
         limit = filter_data.get("limit")
         all_doc = all_doc.order_by(DocModel.created_at.desc())
-        if(current_user.role.id==3):
+        if(current_user.role.title=='Reader'):
             all_doc = all_doc.filter(DocModel.access_level==AccessLevelDoc.public)
 
         if(access_level):
@@ -103,7 +133,8 @@ class DocDownload(MethodView):
     @permission_required("download_doc")
     def get(self, document_id):
         find_doc = DocModel.query.get_or_404(document_id)
-        if(current_user.role.id==3 and find_doc.access_level!=AccessLevelDoc.public):
+        commit_doc_expiration_if_needed(find_doc)
+        if(current_user.role.title=='Reader' and find_doc.access_level!=AccessLevelDoc.public):
             db.session.add(AuditLogModel(
                 user_id=current_user.id,
                 action='download_document',
@@ -115,6 +146,18 @@ class DocDownload(MethodView):
             ))
             db.session.commit()
             return {"message": 'Permission denied'}, 403
+        if not Path(find_doc.file_path).is_file():
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='download_document',
+                document_id=find_doc.id,
+                document_title=find_doc.title,
+                document_reg_number=find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=False
+            ))
+            db.session.commit()
+            return {"message": "File not found on server"}, 404
         with open(find_doc.file_path, "rb") as f:
             file_bytes = f.read()
 
@@ -153,10 +196,25 @@ class DocOperations(MethodView):
     @blp.response(200,DocumentSchema)
     def get(self, document_id):
         find_doc = DocModel.query.get_or_404(document_id)
-        return find_doc
+        commit_doc_expiration_if_needed(find_doc)
+        if(current_user.role.title=='Reader' and find_doc.access_level!=AccessLevelDoc.public):
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='view_document',
+                document_id = find_doc.id,
+                document_title = find_doc.title,
+                document_reg_number = find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=False
+            ))
+            db.session.commit()
+            return {"message": 'Permission denied'}, 403
+            
+        else:
+            return find_doc
 
     @blp.arguments(EditDocumentSchema, location='form')
-    @blp.arguments(UploadDocumentSchema, location='files', required=False)
+    @blp.arguments(FormEditDocumentSchema, location='files', required=False)
     @permission_required("edit")
     def patch(self, form_data, file_data, document_id):
         upload_dir = Path(library_prefix)
@@ -182,9 +240,22 @@ class DocOperations(MethodView):
         find_doc = DocModel.query.get_or_404(document_id)
         for key, value in form_data.items():
             setattr(find_doc, key,value)
+        mark_doc_expired_if_needed(find_doc)
         uploaded_file = file_data.get("file", None)
         if(uploaded_file):
             file_bytes = uploaded_file.read()
+            if not Path(find_doc.file_path).is_file():
+                db.session.add(AuditLogModel(
+                    user_id=current_user.id,
+                    action='edit_document',
+                    document_id=find_doc.id,
+                    document_title=find_doc.title,
+                    document_reg_number=find_doc.reg_number,
+                    timestamp=datetime.now(),
+                    is_complete=False
+                ))
+                db.session.commit()
+                return {"message": "File not found on server"}, 404
             os.remove(find_doc.file_path)
             cipher = Fernet(os.getenv("KEY_DOCUMENT"))
             encrypt_data = cipher.encrypt(file_bytes)
@@ -232,6 +303,19 @@ class DocOperations(MethodView):
                 db.session.commit()
                 return {"message": "Permission denied"}, 403
         find_doc = DocModel.query.get_or_404(document_id)
+        commit_doc_expiration_if_needed(find_doc)
+        if not Path(find_doc.file_path).is_file():
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='delete_document',
+                document_id=document_id,
+                document_title=find_doc.title,
+                document_reg_number=find_doc.reg_number,
+                timestamp=datetime.now(),
+                is_complete=False
+            ))
+            db.session.commit()
+            return {"message": "File not found on server"}, 404
         os.remove(find_doc.file_path)
         db.session.add(AuditLogModel(
             user_id=current_user.id,
@@ -254,13 +338,14 @@ class DocsCount(MethodView):
     @permission_required("read")
     @blp.arguments(DocumentQuerySchema, location='query')
     def get(self, filter_data):
+        update_expired_documents()
         all_doc = DocModel.query
         access_level = filter_data.get("access_level")
         category = filter_data.get("category")
         status = filter_data.get("status")
         name = filter_data.get("name")
 
-        if(current_user.role.id==3):
+        if(current_user.role.title=='Reader'):
             all_doc = all_doc.filter(DocModel.access_level==AccessLevelDoc.public)
 
         if(access_level):

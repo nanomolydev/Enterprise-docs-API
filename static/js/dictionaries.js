@@ -54,10 +54,20 @@ export const LogsInfo = {
       icon: 'bi-list-ul',
       className: 'circle_grey'
   },
+  view_document: {
+      label: 'Просмотр информации о документе',
+      icon: 'bi-list-ul',
+      className: 'circle_grey'
+  },
   edit_document: {
       label: 'Редактирование документа',
       icon: 'bi-pencil-square',
       className: 'circle_yellow'
+  },
+  manage_user: {
+      label: 'Управление пользователем',
+      icon: 'bi-pencil-square',
+      className: 'circle_purple'
   },
   delete_document: {
       label: 'Удаление документа',
@@ -77,6 +87,11 @@ export const LogsInfo = {
   user_logout: {
       label: 'Выход пользователя',
       icon: 'bi-box-arrow-right',
+      className: 'circle_purple'
+  },
+  read_logs: {
+      label: 'Просмотр журнала',
+      icon: 'bi-eye',
       className: 'circle_purple'
   }
 
@@ -100,12 +115,3 @@ export const RoleInfo = {
   
   
 };
-export const ActionsLogs = {
-  created_document: 'Создание документа',
-  view_document_list: 'Просмотр списка документов',
-  edit_document: 'Редактирование документа',
-  delete_document: 'Удаление документа',
-  download_document: 'Скачивание документа',
-  user_login: 'Вход пользователя',
-  user_logout: 'Выход пользователя',
-}

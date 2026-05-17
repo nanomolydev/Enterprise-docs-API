@@ -48,6 +48,7 @@ class LoginOperations(MethodView):
             return {"message": "No data found"}, 404
 @blp.route("/api/logout")
 class LogoutOperations(MethodView):
+    @login_required
     def post(self):
         db.session.add(AuditLogModel(user_id=current_user.id, action='user_logout', timestamp=datetime.datetime.now(),
                                      is_complete=True))

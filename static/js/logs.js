@@ -1,4 +1,4 @@
-import { ActionsLogs, LogsInfo } from "./dictionaries.js";
+import { LogsInfo } from "./dictionaries.js";
 
 function formatDate(value) {
     if (!value) {
@@ -125,7 +125,7 @@ async function read_log(){
         const reg_number_doc = document.getElementById("reg_number_doc");
         const created_at_loglabel = document.getElementById("created_at-log-label");
         name_doc.textContent=data?.document_title || "-";
-        action_log.textContent=ActionsLogs[data?.action];
+        action_log.textContent=LogsInfo[data?.action]?.label;
         reg_number_doc.textContent=data?.document_reg_number  || "-";
         byauthor.textContent = `Сделал: ${data?.user?.full_name}`
         created_at_loglabel.textContent=formatDate(data?.timestamp)
@@ -181,9 +181,9 @@ async function getalllogs(){
 async function load_filter_selected(){
     const search_action = document.getElementById("search_action")
     const search_users = document.getElementById("search_users")
-    for(var key in ActionsLogs){
+    for(var key in LogsInfo){
         let select = `
-            <option value="${key}">${ActionsLogs[key]}</option>
+            <option value="${key}">${LogsInfo[key]?.label}</option>
         `
         search_action.insertAdjacentHTML("beforeend", select)
     }

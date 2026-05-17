@@ -499,3 +499,7 @@ main{
     align-items: center;
     gap: 1rem;
 }
+#show_add_user_modal{
+    width: 100%;
+    justify-content: center;
+}

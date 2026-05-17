@@ -53,14 +53,9 @@ class UserOperations(MethodView):
             db.session.commit()
             return {"message": f"Updated"}, 200
         else:
-            if (role_data['role_id']==0):
-                find.role_id = None
-                find.full_name = role_data.get("full_name", find.full_name)
-                find.is_active = role_data.get("is_active", find.is_active)
-                db.session.add(find)
-                db.session.commit()
-                return {"message": f"Updated"}, 200
-            else:
+            
+            role = RoleModel.query.get_or_404(role_data['role_id'])
+            if (role):
                 find.role_id = role_data['role_id']
                 find.full_name = role_data.get("full_name", find.full_name)
                 find.is_active = role_data.get("is_active", find.is_active)

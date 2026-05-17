@@ -200,11 +200,38 @@ async function edit_user(){
     }
 }
 
+async function add_user(){
+    const add_user_role_select = document.getElementById("add_user_role_select");
+    const inputAddFullNameUser = document.getElementById("inputAddFullNameUser");
+    const inputAddLoginUser = document.getElementById("inputAddLoginUser");
+    const inputAddPasswordUser = document.getElementById("inputAddPasswordUser");
+    const inputAddDepartUser = document.getElementById("inputAddDepartUser");
+    var result_json = {
+        full_name: inputAddFullNameUser.value,
+        login: inputAddLoginUser.value,
+        password: inputAddPasswordUser.value,
+        role_id: add_user_role_select.value
+    };
+    if(inputAddDepartUser.value!=""){
+        result_json['department'] = inputAddDepartUser.value;
+    }
+    const res = await fetch("/api/users",{
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(result_json)
+    });
+    if(await validate_res(res)){
+        window.location.reload();
+    }
+}
+
 function add_edit_role_select(){
     const edit_user_role_select = document.getElementById("edit_user_role_select");
+    const add_user_role_select = document.getElementById("add_user_role_select");
     for(var key in RoleInfo){
         let select =  `<option value="${RoleInfo[key]?.id}">${key}</option>`;
         edit_user_role_select.insertAdjacentHTML('beforeend',select);
+        add_user_role_select.insertAdjacentHTML('beforeend',select);
     }
 }
 
@@ -212,8 +239,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     await get_info_user();
     await getallusers();
-    
+
     const edit_user_btn = document.getElementById("edit_user_btn");
+    const add_user_btn = document.getElementById("add_user_btn");
     const log_select_page = document.getElementById("log_select_page");
     const doc_select_page = document.getElementById("doc_select_page");
     if(log_select_page){
@@ -230,6 +258,10 @@ document.addEventListener("DOMContentLoaded", async function(){
     edit_user_btn.addEventListener("click", async function(){
         event.preventDefault();
         edit_user();
+    })
+    add_user_btn.addEventListener("click", async function(event){
+        event.preventDefault();
+        add_user();
     })
     add_edit_role_select();
 })
