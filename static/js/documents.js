@@ -25,6 +25,16 @@ async function validate_res(res){
     }
 }
 
+async function document_download_func(document_id){
+    const res = await fetch(`api/documents/${document_id}/download`,{
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+    });
+    if(await validate_res(res)){
+        window.location.href = `api/documents/${document_id}/download`
+    }
+    
+}
 
 async function read_doc(event){
     const document_id = event?.target.closest(".document_element").getAttribute('document_id');
@@ -70,28 +80,73 @@ async function read_doc(event){
         file_original_name.textContent = data?.file_original_name;
         author.textContent = `Автор: ${data?.author?.full_name}`;
 
-        const doc_download = document.getElementById("doc-download");
-        const doc_edit = document.getElementById("doc-edit");
-        const doc_delete = document.getElementById("doc-delete");
+        const current_user_data = await get_info_user();
+        
 
         const container_add_doc = document.getElementById("container_add_doc");
         container_add_doc.setAttribute("data-document-id", document_id);
-        doc_download.addEventListener('click', function(event){
-            window.location.href = `api/documents/${document_id}/download`
-        })
-        doc_delete.addEventListener('click', async function(){
-            const container_are_you_sure = new bootstrap.Modal("#container_are_you_sure");
-            container_are_you_sure.show();
-            
-        })
-        doc_edit.addEventListener("click", function (){
-            const exampleModalLabel = document.getElementById("exampleModalLabel");
-            exampleModalLabel.textContent = 'Редактирование документа';
-            container_add_doc.setAttribute("data-type-action", 'edit');
-            
-            const edit_doc_modal = new bootstrap.Modal('#container_add_doc')
-            edit_doc_modal.show();
-        })
+        
+        const container_button_canvas = document.getElementById("container_button_canvas");
+        container_button_canvas.innerHTML = "";
+        if(current_user_data?.role?.download_doc){
+            let download_button = `
+                <button type="button" class="btn btn-primary btn-doc-read btn-doc-download" id="doc-download">
+                    <i class="bi bi-download"></i>
+                    <p class="delete-standart-rules">Скачать</p>
+                </button>
+            `
+            container_button_canvas.insertAdjacentHTML("beforeend", download_button);
+        }
+        if(current_user_data?.role?.edit_anydoc==false && current_user_data?.role?.edit_selfdoc){
+            if(data?.author_id==current_user_data?.id){
+                
+                let edit_button = `
+                    <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
+                        <i class="bi bi-pencil-square"></i>
+                        <p class="delete-standart-rules">Редактировать</p>
+                    </button>
+                `
+                container_button_canvas.insertAdjacentHTML("beforeend", edit_button);
+            }
+        }
+        if(current_user_data?.role?.del_anydoc==false && current_user_data?.role?.del_selfdoc){
+            if(data?.author_id==current_user_data?.id){
+                let delete_button = `
+                    <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
+                        <i class="bi bi-trash"></i>
+                        <p class="delete-standart-rules">Удалить</p>
+                    </button>
+                `
+                container_button_canvas.insertAdjacentHTML("beforeend", delete_button);
+            }
+        }
+        const doc_download = document.getElementById("doc-download");
+        const doc_edit = document.getElementById("doc-edit");
+        const doc_delete = document.getElementById("doc-delete");
+        if(doc_download){
+            doc_download.addEventListener('click', async function(){
+                await document_download_func(document_id);
+            })
+        }
+
+        if(doc_delete){
+            doc_delete.addEventListener('click', async function(){
+                const container_are_you_sure = new bootstrap.Modal("#container_are_you_sure");
+                container_are_you_sure.show();
+                
+            })
+        }
+        
+        if(doc_edit){
+            doc_edit.addEventListener("click", function (){
+                const exampleModalLabel = document.getElementById("exampleModalLabel");
+                exampleModalLabel.textContent = 'Редактирование документа';
+                container_add_doc.setAttribute("data-type-action", 'edit');
+                
+                const edit_doc_modal = new bootstrap.Modal('#container_add_doc')
+                edit_doc_modal.show();
+            })
+        }
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         const bsOffcanvas = new bootstrap.Offcanvas('#offcanvasRight');
@@ -162,45 +217,92 @@ async function get_info_user(){
     });
     if(await validate_res(res)){
         const data = await res.json();
-        const first_word_avatar = document.getElementById("first_word_avatar");
-        const last_word_avatar = document.getElementById("last_word_avatar");
-        const avatar_word = data?.full_name.split(" ");
-        const full_name_dropdown = document.getElementById("full_name_dropdown");
-        const role_dropdown = document.getElementById("role_dropdown");
-        full_name_dropdown.textContent = data?.full_name;
-        role_dropdown.textContent = `Роль: ${data?.role?.title}`;
-        if(avatar_word.length>=2){
-            first_word_avatar.textContent = avatar_word[0][0];
-            last_word_avatar.textContent = avatar_word[avatar_word.length-1][0]
-
-        }
-        else if(avatar_word.length==1){
-            first_word_avatar.textContent = avatar_word[0][0];
-        }
-        else {
-            first_word_avatar.textContent = 'T';
-        }
-        
-        
-        
-        
-
-        const rightside = document.getElementById("rightside")
-        if (data?.role?.user_manage){
-            let manage_option = `
-                <a href="#"\ class="btn btn-primary-custom  me-2" id="user_page_btn">
-                    <i class="bi bi-person-video2" id="iconnavbtn"></i>
-                    Пользователи
-                </a>
-                <a href="#" class="btn btn-primary-custom  me-2" id="logs_page_btn">
-                    <i class="bi bi-clock-history" id="iconnavbtn"></i>
-                    Журнал
-                </a>
-            `
-            rightside.insertAdjacentHTML('afterbegin', manage_option);
-        }
+        return data;
     }
 }
+
+
+async function insert_info_user(){
+    const data = await get_info_user();
+    const first_word_avatar = document.getElementById("first_word_avatar");
+    const last_word_avatar = document.getElementById("last_word_avatar");
+    const avatar_word = data?.full_name.split(" ");
+    const full_name_dropdown = document.getElementById("full_name_dropdown");
+    const role_dropdown = document.getElementById("role_dropdown");
+    full_name_dropdown.textContent = data?.full_name;
+    role_dropdown.textContent = `Роль: ${data?.role?.title}`;
+    if(avatar_word.length>=2){
+        first_word_avatar.textContent = avatar_word[0][0];
+        last_word_avatar.textContent = avatar_word[avatar_word.length-1][0]
+
+    }
+    else if(avatar_word.length==1){
+        first_word_avatar.textContent = avatar_word[0][0];
+    }
+    else {
+        first_word_avatar.textContent = 'T';
+    }
+    
+    
+    
+    
+
+    const rightside = document.getElementById("rightside");
+    const searchtools = document.getElementById("searchtools");
+    const container_button_canvas = document.getElementById("container_button_canvas");
+    container_button_canvas.innerHTML = "";
+    if(data?.role?.download_doc){
+        let download_button = `
+            <button type="button" class="btn btn-primary btn-doc-read btn-doc-download" id="doc-download">
+                <i class="bi bi-download"></i>
+                <p class="delete-standart-rules">Скачать</p>
+            </button>
+        `
+        container_button_canvas.insertAdjacentHTML("beforeend", download_button);
+    }
+    if(data?.role?.edit_anydoc){
+
+        let edit_button = `
+            <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
+                <i class="bi bi-pencil-square"></i>
+                <p class="delete-standart-rules">Редактировать</p>
+            </button>
+        `
+        container_button_canvas.insertAdjacentHTML("beforeend", edit_button);
+    }
+    if(data?.role?.del_anydoc){
+        let delete_button = `
+            <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
+                <i class="bi bi-trash"></i>
+                <p class="delete-standart-rules">Удалить</p>
+            </button>
+        `
+        container_button_canvas.insertAdjacentHTML("beforeend", delete_button);
+    }
+    if(data?.role?.create_doc){
+        let create_doc_btn = `
+            <a href="#" id="show_add_modal" class="btn btn-primary-search" data-bs-toggle="modal" data-bs-target="#container_add_doc">
+                <i class="bi bi-plus"></i>
+                Добавить
+            </a>
+        `
+        searchtools.insertAdjacentHTML('beforeend', create_doc_btn);
+    }
+    if (data?.role?.user_manage){
+        let manage_option = `
+            <a href="#"\ class="btn btn-primary-custom  me-2" id="user_page_btn">
+                <i class="bi bi-person-video2" id="iconnavbtn"></i>
+                Пользователи
+            </a>
+            <a href="#" class="btn btn-primary-custom  me-2" id="logs_page_btn">
+                <i class="bi bi-clock-history" id="iconnavbtn"></i>
+                Журнал
+            </a>
+        `
+        rightside.insertAdjacentHTML('afterbegin', manage_option);
+    }
+}
+
 
 async function getalldoc(){
     const res = await fetch("/api/documents",{
@@ -452,13 +554,12 @@ async function back_page(){
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    await get_info_user();
+    await insert_info_user();
     await getalldoc();
     
 
     const backtologin = document.getElementById("backtologin");
     const add_doc_btn = document.getElementById("add_doc_btn");
-    const show_add_modal = document.getElementById("show_add_modal");
     const user_page_btn = document.getElementById("user_page_btn");
     const logs_page_btn = document.getElementById("logs_page_btn");
     const count_doc = document.getElementById("count_doc");
@@ -469,7 +570,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     const search_access_level = document.getElementById("search_access_level");
     const search_status = document.getElementById("search_status");
     const delete_doc_btn = document.getElementById("delete_doc_btn");
+    const show_add_modal = document.getElementById("show_add_modal");
     await load_limit();
+    if(show_add_modal){
+        show_add_modal.addEventListener("click", async function(){
+            const exampleModalLabel = document.getElementById("exampleModalLabel");
+                exampleModalLabel.textContent = 'Добавление документа';
+            const container_add_doc = document.getElementById("container_add_doc");
+            container_add_doc.setAttribute("data-type-action", 'create');
+        })
+    }
     if(user_page_btn){
         user_page_btn.addEventListener("click", async function(){
             window.location.href = '/users'
@@ -505,17 +615,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     count_doc.addEventListener("change", async function(){
         await load_limit();
     })
-    show_add_modal.addEventListener("click", async function(){
-        const exampleModalLabel = document.getElementById("exampleModalLabel");
-            exampleModalLabel.textContent = 'Добавление документа';
-        const container_add_doc = document.getElementById("container_add_doc");
-        container_add_doc.setAttribute("data-type-action", 'create');
-    })
     add_doc_btn.addEventListener("click", async function(){
         event.preventDefault();
         add_edit_doc();
     })
     backtologin.addEventListener('click', async function(){
+        console.log("sdf");
         await logout_user();
     })
     load_add_doc_select();

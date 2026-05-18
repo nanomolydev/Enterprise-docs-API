@@ -503,3 +503,7 @@ main{
     width: 100%;
     justify-content: center;
 }
+#container_button_canvas{
+    display: flex;
+    flex-direction: column;
+}

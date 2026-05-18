@@ -20,6 +20,7 @@ class PlainRoleSchema(Schema):
     download_doc = fields.Bool(required=True)
 
 class SmallUserSchema(Schema):
+    id = fields.Int(required=False, dump_only=True)
     full_name = fields.Str(required=True)
     role_id = fields.Int(required=True)
     role = fields.Nested(PlainRoleSchema, dump_only=True,required=False)

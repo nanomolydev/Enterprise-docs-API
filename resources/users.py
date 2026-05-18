@@ -32,7 +32,7 @@ class UsersOperations(MethodView):
         db.session.add(AuditLogModel(
             user_id=current_user.id,
             action='manage_user',
-            timestamp=datetime.now(),
+            timestamp=datetime.datetime.now(),
             is_complete=True
         ))
         db.session.commit()
@@ -62,7 +62,7 @@ class UserOperations(MethodView):
             db.session.add(AuditLogModel(
                 user_id=current_user.id,
                 action='manage_user',
-                timestamp=datetime.now(),
+                timestamp=datetime.datetime.now(),
                 is_complete=True
             ))
             db.session.commit()
@@ -78,7 +78,7 @@ class UserOperations(MethodView):
                 db.session.add(AuditLogModel(
                     user_id=current_user.id,
                     action='manage_user',
-                    timestamp=datetime.now(),
+                    timestamp=datetime.datetime.now(),
                     is_complete=True
                 ))
                 db.session.commit()

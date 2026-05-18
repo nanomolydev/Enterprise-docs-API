@@ -65,10 +65,7 @@
                         <option value="archived">Архив</option>
                         <option value="expired">Истёк срок хранения</option>
                     </select>
-                    <a href="#" id="show_add_modal" class="btn btn-primary-search" data-bs-toggle="modal" data-bs-target="#container_add_doc">
-                        <i class="bi bi-plus"></i>
-                        Добавить
-                    </a>
+                    
                 </div>
                 <div id="doc_page_bar" class="page_bar">
                     <div id="counter_page_container">
@@ -124,7 +121,7 @@
                         <h5 class="offcanvas-title" id="offcanvasRightLabel">ДОКУМЕНТ</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-body">
+                    <div class="offcanvas-body" id="right_canvas_doc">
                         <p id="readdocname" class="delete-standart-rules">Название документа</p>
                         <p class="delete-standart-rules" id="byauthor-text-read-doc">Автор:</p>
                         <div class="statusbar" id="read_doc_statusbar">
@@ -169,19 +166,11 @@
                                 <p style="color: #FEFDFA;" class="delete-standart-rules " id="file_original_name-doc">report_financial_q1_2024.pdf</p>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-download" id="doc-download">
-                            <i class="bi bi-download"></i>
-                            <p class="delete-standart-rules">Скачать</p>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
-                            <i class="bi bi-pencil-square"></i>
-                            <p class="delete-standart-rules">Редактировать</p>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
-                            <i class="bi bi-trash"></i>
-                            <p class="delete-standart-rules">Удалить</p>
-                        </button>
+                        <div id="container_button_canvas">
+                            
+                        </div>
                     </div>
+                    
                     
                 </div>
                 

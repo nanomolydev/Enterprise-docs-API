@@ -234,6 +234,15 @@ function add_edit_role_select(){
         add_user_role_select.insertAdjacentHTML('beforeend',select);
     }
 }
+async function logout_user(){
+    const res = await fetch("/api/logout",{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    });
+    if(await validate_res(res)){
+        window.location .href = '/login'
+    }
+}
 
 document.addEventListener("DOMContentLoaded", async function(){
 
@@ -244,6 +253,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const add_user_btn = document.getElementById("add_user_btn");
     const log_select_page = document.getElementById("log_select_page");
     const doc_select_page = document.getElementById("doc_select_page");
+    const backtologin = document.getElementById("backtologin");
     if(log_select_page){
         log_select_page.addEventListener("click", function(){
             window.location.href = '/logs'
@@ -258,6 +268,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     edit_user_btn.addEventListener("click", async function(){
         event.preventDefault();
         edit_user();
+    })
+    backtologin.addEventListener('click', async function(){
+        await logout_user();
     })
     add_user_btn.addEventListener("click", async function(event){
         event.preventDefault();

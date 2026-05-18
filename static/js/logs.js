@@ -365,6 +365,15 @@ async function back_page(){
     }
 }
 
+async function logout_user(){
+    const res = await fetch("/api/logout",{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    });
+    if(await validate_res(res)){
+        window.location .href = '/login'
+    }
+}
 
 document.addEventListener("DOMContentLoaded", async function(){
     await get_info_user();
@@ -385,6 +394,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const select_delete = document.getElementById("select_delete");
     const sure_delete = document.getElementById("sure_delete");
     const trash_dropdown = document.getElementById("trash_dropdown");
+    const backtologin = document.getElementById("backtologin");
     inputEndTimestamp.addEventListener('change', async function(){
         await load_limit();
     })
@@ -417,4 +427,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             window.location.href = '/documents'
         })
     }
+    backtologin.addEventListener('click', async function(){
+        await logout_user();
+    })
 })
