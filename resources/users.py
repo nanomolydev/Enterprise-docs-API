@@ -2,10 +2,12 @@ import datetime
 
 from flask import jsonify
 from flask.views import MethodView
+from flask_login import current_user
 from flask_smorest import Blueprint
 from db import db
 from decorators.roles import permission_required
 from models import UserModel, RoleModel
+from models.audit_log import AuditLogModel
 from schemas import UserSchema, PatchUser
 
 blp = Blueprint("users", __name__, description='User Operations')
@@ -27,7 +29,14 @@ class UsersOperations(MethodView):
         new_user.login = user_data['login']
         new_user.set_password(user_data['password'])
         db.session.add(new_user)
+        db.session.add(AuditLogModel(
+            user_id=current_user.id,
+            action='manage_user',
+            timestamp=datetime.now(),
+            is_complete=True
+        ))
         db.session.commit()
+        
         return new_user
     @blp.response(200,UserSchema(many=True))
     @permission_required('user_manage')
@@ -50,6 +59,12 @@ class UserOperations(MethodView):
             find.full_name = role_data.get("full_name", find.full_name)
             find.is_active = role_data.get("is_active", find.is_active)
             db.session.add(find)
+            db.session.add(AuditLogModel(
+                user_id=current_user.id,
+                action='manage_user',
+                timestamp=datetime.now(),
+                is_complete=True
+            ))
             db.session.commit()
             return {"message": f"Updated"}, 200
         else:
@@ -60,5 +75,11 @@ class UserOperations(MethodView):
                 find.full_name = role_data.get("full_name", find.full_name)
                 find.is_active = role_data.get("is_active", find.is_active)
                 db.session.add(find)
+                db.session.add(AuditLogModel(
+                    user_id=current_user.id,
+                    action='manage_user',
+                    timestamp=datetime.now(),
+                    is_complete=True
+                ))
                 db.session.commit()
                 return {"message": f"Updated"}, 200
