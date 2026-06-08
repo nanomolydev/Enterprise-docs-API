@@ -29,23 +29,27 @@ class LoginOperations(MethodView):
     @blp.arguments(PlainUserSchema)
     def post(self, user_data):
         if current_user.is_authenticated:
-            return {"message": "You are already logged in"}, 200
+            return {"message": "Вы уже вошли в систему"}, 200
         find_user = UserModel.query.filter(UserModel.login==user_data['login']).first()
         if(find_user):
+            if not find_user.is_active:
+                db.session.add(AuditLogModel(user_id=find_user.id, action='user_login', timestamp=datetime.datetime.now(), is_complete=False))
+                db.session.commit()
+                return {"message": "Аккаунт деактивирован. Обратитесь к администратору"}, 403
             if(find_user.check_password(user_data['password'])):
                 login_user(find_user)
                 db.session.add(
                     AuditLogModel(user_id=find_user.id, action='user_login', timestamp=datetime.datetime.now(),
                                   is_complete=True))
                 db.session.commit()
-                return {"message": "You are logged in"}, 200
+                return {"message": "Вход выполнен"}, 200
             else:
 
                 db.session.add(AuditLogModel(user_id=find_user.id,action='user_login', timestamp=datetime.datetime.now(), is_complete=False))
                 db.session.commit()
-                return {"message": "Incorrect password"}, 401
+                return {"message": "Неверный пароль"}, 401
         else:
-            return {"message": "No data found"}, 404
+            return {"message": "Пользователь не найден"}, 404
 @blp.route("/api/logout")
 class LogoutOperations(MethodView):
     @login_required
@@ -54,7 +58,7 @@ class LogoutOperations(MethodView):
                                      is_complete=True))
         db.session.commit()
         logout_user()
-        return {"message": "You are logout"}, 200
+        return {"message": "Вы вышли из системы"}, 200
 
 @blp.route("/api/get_myself")
 class CheckMySelf(MethodView):

@@ -21,7 +21,7 @@ def permission_required(permission):
                     is_complete=False
                 ))
                 db.session.commit()
-                abort(403, 'Permission denied')
+                abort(403, 'Аккаунт деактивирован. Обратитесь к администратору')
             if(permission=='read'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.read_doc==False):
@@ -32,7 +32,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if(permission=='edit'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.edit_selfdoc == True or find_user.role.edit_anydoc == True):
@@ -45,7 +45,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if (permission == 'delete'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.del_selfdoc == True or find_user.role.del_anydoc == True):
@@ -58,7 +58,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if (permission == 'user_manage'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.user_manage == False):
@@ -69,7 +69,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if (permission == 'create_doc'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.create_doc == False):
@@ -80,7 +80,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if (permission == 'download_doc'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.download_doc == False):
@@ -91,7 +91,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             if(permission=='read_logs'):
                 find_user = UserModel.query.get_or_404(current_user.id)
                 if (find_user.role.read_logs == False):
@@ -102,7 +102,7 @@ def permission_required(permission):
                         is_complete=False
                     ))
                     db.session.commit()
-                    abort(403, 'Permission denied')
+                    abort(403, 'Доступ запрещён')
             return func(*args, **kwargs)
 
         return wrapper

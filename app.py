@@ -1,9 +1,8 @@
 import datetime
 import os
-from tkinter.font import names
 
-from flask import Flask
-from flask_login import LoginManager
+from flask import Flask, jsonify
+from werkzeug.exceptions import HTTPException
 
 from db import db
 import models
@@ -59,6 +58,27 @@ def create_app():
     app.config['API_TITLE'] = 'Enterprise docs'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
     login.init_app(app)
+
+    @login.unauthorized_handler
+    def unauthorized():
+        return jsonify({"message": "Необходима авторизация"}), 401
+
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(err):
+        messages = {
+            400: "Некорректный запрос",
+            401: "Необходима авторизация",
+            403: "Доступ запрещён",
+            404: "Запрошенные данные не найдены",
+            405: "Метод запроса не поддерживается",
+            409: "Конфликт данных",
+            422: "Ошибка валидации данных",
+            500: "Внутренняя ошибка сервера",
+        }
+        description = getattr(err, "description", "")
+        message = description if any("а" <= char.lower() <= "я" or char == "ё" for char in description) else messages.get(err.code, "Ошибка выполнения запроса")
+        return jsonify({"message": message}), err.code
+
     db.init_app(app)
     with app.app_context():
         db.create_all()

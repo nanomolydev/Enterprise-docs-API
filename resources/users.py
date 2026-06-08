@@ -66,7 +66,7 @@ class UserOperations(MethodView):
                 is_complete=True
             ))
             db.session.commit()
-            return {"message": f"Updated"}, 200
+            return {"message": "Пользователь обновлён"}, 200
         else:
             
             role = RoleModel.query.get_or_404(role_data['role_id'])
@@ -82,4 +82,4 @@ class UserOperations(MethodView):
                     is_complete=True
                 ))
                 db.session.commit()
-                return {"message": f"Updated"}, 200
+                return {"message": "Пользователь обновлён"}, 200

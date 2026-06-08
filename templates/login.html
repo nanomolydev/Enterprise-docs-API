@@ -13,14 +13,14 @@
       </symbol>
     </svg>
     <div id="loginwindow">
-      <form id="loginform" onsubmit="loginfunc()">
+      <form id="loginform" onsubmit="loginfunc(event)">
         <div class="mb-3">
-          <label for="loginuser" class="form-label">Username</label>
+          <label for="loginuser" class="form-label">Логин пользователя</label>
           <input pattern="[A-Za-z0-9_-]{3,20}" type="text" class="form-control" id="loginuser" required>
           <label id="loginerrlabel" class="errorlabel"></label>
         </div>
         <div class="mb-3">
-          <label for="password_user" class="form-label">Password</label>
+          <label for="password_user" class="form-label">Пароль</label>
           <input  type="password" class="form-control" id="password_user">
           <label id="passworderrlabel" class="errorlabel"></label>
         </div>

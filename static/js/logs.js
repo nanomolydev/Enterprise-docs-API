@@ -21,9 +21,42 @@ async function validate_res(res){
         return true
     }
     else{
-        create_toast(await res.text());
+        const messages = await get_response_messages(res);
+        messages.forEach(message => create_toast(message));
         return false
     }
+}
+
+async function get_response_messages(res) {
+    let data = null;
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+        data = await res.json();
+    }
+    else {
+        const text = await res.text();
+        return [text || "Ошибка выполнения запроса"];
+    }
+
+    const messages = [];
+    if (data?.message) {
+        messages.push(data.message);
+    }
+    messages.push(...extract_error_messages(data?.errors));
+    return messages.length ? messages : ["Ошибка выполнения запроса"];
+}
+
+function extract_error_messages(value) {
+    if (!value) {
+        return [];
+    }
+    if (Array.isArray(value)) {
+        return value.flatMap(extract_error_messages);
+    }
+    if (typeof value === "object") {
+        return Object.values(value).flatMap(extract_error_messages);
+    }
+    return [String(value)];
 }
 
 

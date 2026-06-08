@@ -20,7 +20,42 @@ function create_toast(toast_text){
     });
 }
 
-async function loginfunc(){
+async function get_response_messages(res) {
+    let data = null;
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+        data = await res.json();
+    }
+    else {
+        const text = await res.text();
+        return [text || "Ошибка выполнения запроса"];
+    }
+
+    const messages = [];
+    if (data?.message && !data?.errors) {
+        messages.push(data.message);
+    }
+    messages.push(...extract_error_messages(data?.errors));
+    if (data?.message && data?.errors && messages.length === 0) {
+        messages.push(data.message);
+    }
+    return messages.length ? messages : ["Ошибка выполнения запроса"];
+}
+
+function extract_error_messages(value) {
+    if (!value) {
+        return [];
+    }
+    if (Array.isArray(value)) {
+        return value.flatMap(extract_error_messages);
+    }
+    if (typeof value === "object") {
+        return Object.values(value).flatMap(extract_error_messages);
+    }
+    return [String(value)];
+}
+
+async function loginfunc(event){
     event.preventDefault(); 
     var login = document.getElementById("loginuser");
     var password = document.getElementById("password_user");
@@ -29,24 +64,12 @@ async function loginfunc(){
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({"login": login.value, "password": password.value})
     });
-    const data = await res.json();
-    data.errors?.json?.password?.forEach(error => {
-        create_toast(error);
-    });
-    data.errors?.json?.login?.forEach(error => {
-        create_toast(error);
-    });
     if(res.status==200){
         window.location.href = '/documents';
     }
     else{
-        if(data){
-            create_toast(data?.message);
-        }
-        else{
-            create_toast(await res.text());
-        }
-        
+        const messages = await get_response_messages(res);
+        messages.forEach(message => create_toast(message));
     }
 }
 
@@ -57,9 +80,6 @@ async function get_info_user(){
     });
     if (res.status==200){
         window.location.href = '/documents';
-    }
-    else{
-        create_toast(await res.text());
     }
 }
 

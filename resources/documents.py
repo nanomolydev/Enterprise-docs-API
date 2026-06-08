@@ -145,7 +145,7 @@ class DocDownload(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": 'Permission denied'}, 403
+            return {"message": "Доступ запрещён"}, 403
         if not Path(find_doc.file_path).is_file():
             db.session.add(AuditLogModel(
                 user_id=current_user.id,
@@ -157,7 +157,7 @@ class DocDownload(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": "File not found on server"}, 404
+            return {"message": "Файл не найден на сервере"}, 404
         with open(find_doc.file_path, "rb") as f:
             file_bytes = f.read()
 
@@ -188,7 +188,7 @@ class DocDownload(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": "File checksum mismatch detected"}, 409
+            return {"message": "Контрольная сумма файла не совпадает"}, 409
 
 @blp.route("/api/documents/<int:document_id>")
 class DocOperations(MethodView):
@@ -208,7 +208,7 @@ class DocOperations(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": 'Permission denied'}, 403
+            return {"message": "Доступ запрещён"}, 403
             
         else:
             return find_doc
@@ -236,7 +236,7 @@ class DocOperations(MethodView):
                     is_complete=False
                 ))
                 db.session.commit()
-                return {"message": "Permission denied"}, 403
+                return {"message": "Доступ запрещён"}, 403
         find_doc = DocModel.query.get_or_404(document_id)
         for key, value in form_data.items():
             setattr(find_doc, key,value)
@@ -255,7 +255,7 @@ class DocOperations(MethodView):
                     is_complete=False
                 ))
                 db.session.commit()
-                return {"message": "File not found on server"}, 404
+                return {"message": "Файл не найден на сервере"}, 404
             os.remove(find_doc.file_path)
             cipher = Fernet(os.getenv("KEY_DOCUMENT"))
             encrypt_data = cipher.encrypt(file_bytes)
@@ -281,7 +281,7 @@ class DocOperations(MethodView):
             is_complete=True
         ))
         db.session.commit()
-        return {"message": "File edited"}, 200
+        return {"message": "Документ обновлён"}, 200
     @permission_required('delete')
     def delete(self, document_id):
         role = RoleModel.query.filter(RoleModel.users.any(id=current_user.id)).first()
@@ -301,7 +301,7 @@ class DocOperations(MethodView):
                     is_complete=False
                 ))
                 db.session.commit()
-                return {"message": "Permission denied"}, 403
+                return {"message": "Доступ запрещён"}, 403
         find_doc = DocModel.query.get_or_404(document_id)
         commit_doc_expiration_if_needed(find_doc)
         if not Path(find_doc.file_path).is_file():
@@ -315,7 +315,7 @@ class DocOperations(MethodView):
                 is_complete=False
             ))
             db.session.commit()
-            return {"message": "File not found on server"}, 404
+            return {"message": "Файл не найден на сервере"}, 404
         os.remove(find_doc.file_path)
         db.session.add(AuditLogModel(
             user_id=current_user.id,
@@ -330,7 +330,7 @@ class DocOperations(MethodView):
         db.session.delete(find_doc)
         db.session.commit()
 
-        return {"message": "Delete success"}, 200
+        return {"message": "Документ удалён"}, 200
     
 
 @blp.route("/api/documents/count")
