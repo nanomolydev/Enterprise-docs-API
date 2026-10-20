@@ -21,7 +21,7 @@ Python, Flask, Flask-Smorest, Flask-Sqlalchemy, cryptography, flask-login, marsh
 
 Скачать python3.10+
 
- ```git clone https://github.com/nanomolydev/Enterprise-docs-API.git```
+ `git clone https://github.com/nanomolydev/Enterprise-docs-API.git`
 
 создаем виртуальное окружение:
 
@@ -38,14 +38,15 @@ python -m venv .venv
 ```
 
 Устанавливаем зависимости:
-```pip install -r requirements.txt```
+`pip install -r requirements.txt`
 
 создать .env по шаблону в .env-example
-генерируем два byte ключа можно использовать [этот сайт ](https://randomkeygen.com/encryption-key)
+генерируем два byte ключа для документов и авторизации с помощью `python3 generate.py`
+или `python generate.py` на Windows
 придумываем логин и пароль
-запускаем с помощью команды ```flask run```
+запускаем с помощью команды `flask run`
 
-заходим на страницу ```http://127.0.0.1:5000/documents```
+заходим на страницу `http://127.0.0.1:5000/documents`
 
 Готово!
 
@@ -88,9 +89,3 @@ python -m venv .venv
 
 ### AuditlogModel
 Журнал с действием, автором, временем, статусом о удачном или неудачном действии, названием документа если действие связано с документов, и регистрационный номер документа
-
-## Основные ендпоинты
-```!Скоро добавиться```
-
-### Что было интересно сделать
-```!Скоро добавиться```
