@@ -130,28 +130,23 @@ async function read_doc(event){
             `
             container_button_canvas.insertAdjacentHTML("beforeend", download_button);
         }
-        if(current_user_data?.role?.edit_anydoc==false && current_user_data?.role?.edit_selfdoc){
-            if(data?.author_id==current_user_data?.id){
-                
-                let edit_button = `
-                    <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
-                        <i class="bi bi-pencil-square"></i>
-                        <p class="delete-standart-rules">Редактировать</p>
-                    </button>
-                `
-                container_button_canvas.insertAdjacentHTML("beforeend", edit_button);
-            }
+        if(current_user_data?.role?.edit_anydoc==true || (data?.author_id==current_user_data?.id && current_user_data?.role?.edit_selfdoc)){
+            let edit_button = `
+                <button type="button" class="btn btn-primary btn-doc-read btn-doc-edit" id="doc-edit">
+                    <i class="bi bi-pencil-square"></i>
+                    <p class="delete-standart-rules">Редактировать</p>
+                </button>
+            `
+            container_button_canvas.insertAdjacentHTML("beforeend", edit_button);
         }
-        if(current_user_data?.role?.del_anydoc==false && current_user_data?.role?.del_selfdoc){
-            if(data?.author_id==current_user_data?.id){
-                let delete_button = `
-                    <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
-                        <i class="bi bi-trash"></i>
-                        <p class="delete-standart-rules">Удалить</p>
-                    </button>
-                `
-                container_button_canvas.insertAdjacentHTML("beforeend", delete_button);
-            }
+        if(current_user_data?.role?.del_anydoc==true || (data?.author_id==current_user_data?.id && current_user_data?.role?.del_selfdoc)){
+            let delete_button = `
+                <button type="button" class="btn btn-primary btn-doc-read btn-doc-delete" id="doc-delete">
+                    <i class="bi bi-trash"></i>
+                    <p class="delete-standart-rules">Удалить</p>
+                </button>
+            `
+            container_button_canvas.insertAdjacentHTML("beforeend", delete_button);
         }
         const doc_download = document.getElementById("doc-download");
         const doc_edit = document.getElementById("doc-edit");
